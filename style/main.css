@@ -1,0 +1,240 @@
+
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500&display=swap');
+
+/* ── Modo Claro (padrão) ── */
+:root {
+  --rosa:        #F06292;
+  --rosa-claro:  #FCE4EC;
+  --rosa-medio:  #F48FB1;
+  --roxo:        #7B2D8B;
+  --roxo-medio:  #AB47BC;
+  --roxo-claro:  #F3E5F5;
+
+  --gradiente: linear-gradient(135deg, var(--rosa) 0%, var(--roxo-medio) 100%);
+
+  --branco:      #FFFFFF;
+  --fundo:       #FDF8FC;
+  --cinza-claro: #F5F5F5;
+  --cinza-texto: #9E9E9E;
+  --texto:       #3D2645;
+
+  /* Variáveis de tema — mudam no modo escuro */
+  --bg-page:       #FDF8FC;
+  --bg-card:       #FFFFFF;
+  --bg-topbar:     rgba(253, 248, 252, 0.88);
+  --bg-navbar:     rgba(255, 255, 255, 0.92);
+  --border-color:  #FCE4EC;
+  --text-primary:  #3D2645;
+  --text-muted:    #9E9E9E;
+  --input-bg:      #FDF8FC;
+  --shadow-card:   0 4px 24px rgba(123, 45, 139, 0.14);
+  --shadow-topbar: 0 2px 16px rgba(123, 45, 139, 0.08);
+
+  --fonte-titulo: 'Playfair Display', serif;
+  --fonte-corpo:  'Inter', sans-serif;
+
+  --texto-xs:  0.75rem;
+  --texto-sm:  0.875rem;
+  --texto-md:  1rem;
+  --texto-lg:  1.125rem;
+  --texto-xl:  1.5rem;
+  --texto-2xl: 2rem;
+
+  --espaco-xs:  0.25rem;
+  --espaco-sm:  0.5rem;
+  --espaco-md:  1rem;
+  --espaco-lg:  1.5rem;
+  --espaco-xl:  2rem;
+  --espaco-2xl: 3rem;
+
+  --borda-sm:   8px;
+  --borda-md:   12px;
+  --borda-lg:   20px;
+  --borda-pill: 999px;
+
+  --sombra-suave: 0 2px 16px rgba(123, 45, 139, 0.08);
+  --sombra-media: 0 4px 24px rgba(123, 45, 139, 0.14);
+  --sombra-forte: 0 8px 40px rgba(123, 45, 139, 0.20);
+}
+
+/* ── Modo Escuro ── */
+/* Quando o <html> tiver a classe "dark", essas variáveis substituem as de cima */
+html.dark {
+  --bg-page:      #1A1020;
+  --bg-card:      #251830;
+  --bg-topbar:    rgba(26, 16, 32, 0.90);
+  --bg-navbar:    rgba(26, 16, 32, 0.95);
+  --border-color: rgba(240, 98, 146, 0.15);
+  --text-primary: #F0E6F6;
+  --text-muted:   #7A6880;
+  --input-bg:     #1A1020;
+  --shadow-card:  0 4px 24px rgba(0, 0, 0, 0.4);
+  --shadow-topbar:0 2px 16px rgba(0, 0, 0, 0.3);
+  --branco:       #251830;
+  --fundo:        #1A1020;
+  --rosa-claro:   rgba(240, 98, 146, 0.12);
+  --cinza-texto:  #7A6880;
+  --texto:        #F0E6F6;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--fonte-corpo);
+  font-size: var(--texto-md);
+  color: var(--text-primary);
+  background-color: var(--bg-page);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0,0,0,0);
+  white-space: nowrap;
+}
+
+/* ════════════════════════════════════
+   SIDEBAR (menu lateral deslizante)
+   Compartilhada por todas as páginas.
+   Abre ao clicar na logo da topbar.
+════════════════════════════════════ */
+
+/* Fundo escurecido por trás da sidebar */
+.sidebar-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(20, 10, 25, 0.45);
+  backdrop-filter: blur(2px);
+  z-index: 400;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.sidebar-overlay.aberta {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Painel lateral */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 78%;
+  max-width: 300px;
+  background: var(--bg-card);
+  z-index: 401;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--sombra-forte);
+  transform: translateX(-100%);
+  transition: transform 0.3s ease;
+}
+.sidebar.aberta {
+  transform: translateX(0);
+}
+
+/* Cabeçalho da sidebar: logo + nome do app */
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: var(--espaco-lg) var(--espaco-lg) var(--espaco-md);
+  border-bottom: 1px solid var(--border-color);
+}
+.sidebar-header img {
+  width: 38px;
+  height: 38px;
+  object-fit: contain;
+}
+.sidebar-header span {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-lg);
+  font-weight: 500;
+  background: var(--gradiente);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Lista de itens do menu */
+.sidebar-menu {
+  display: flex;
+  flex-direction: column;
+  padding: var(--espaco-sm) 0;
+  flex: 1;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0.85rem var(--espaco-lg);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--fonte-corpo);
+  font-size: var(--texto-sm);
+  font-weight: 500;
+  color: var(--text-primary);
+  text-align: left;
+  width: 100%;
+  transition: background 0.15s;
+}
+.sidebar-item:hover {
+  background: var(--rosa-claro);
+}
+.sidebar-item-icone {
+  font-size: 1.15rem;
+  width: 22px;
+  text-align: center;
+}
+
+/* Separador antes do "Sair" */
+.sidebar-divisor {
+  height: 1px;
+  background: var(--border-color);
+  margin: var(--espaco-sm) var(--espaco-lg);
+}
+
+.sidebar-item.sair {
+  color: #E53935;
+}
+.sidebar-item.sair:hover {
+  background: rgba(229,57,53,0.08);
+}
+
+/* Botão de fechar (X) no topo da sidebar, lado direito */
+.sidebar-fechar {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  padding: 4px 8px;
+  border-radius: var(--borda-sm);
+  margin-left: auto;
+}
+.sidebar-fechar:hover {
+  background: var(--rosa-claro);
+}
+
+/* Logo da topbar agora é clicável */
+.topbar-logo {
+  cursor: pointer;
+  transition: transform 0.15s;
+}
+.topbar-logo:hover {
+  transform: scale(1.06);
+}

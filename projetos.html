@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRISMA — Projetos</title>
+  <script>
+    if (localStorage.getItem('prisma-tema') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="style/projetos.css" />
+</head>
+<body>
+
+<div class="proj-page">
+
+ 
+  <header class="topbar" id="topbar">
+    <img src="assets/logo.png" alt="PRISMA" class="topbar-logo" id="logo-abre-sidebar" />
+
+    <nav class="topbar-nav-desktop">
+      <button class="topbar-nav-link" onclick="window.location.href='financeiro.html'">💰 Finanças</button>
+      <button class="topbar-nav-link" onclick="window.location.href='home.html'">🏠 Home</button>
+      <button class="topbar-nav-link" onclick="window.location.href='estudos.html'">📚 Estudos</button>
+      <button class="topbar-nav-link ativo" onclick="window.location.href='projetos.html'">🎯 Projetos</button>
+    </nav>
+
+    <span class="topbar-titulo">Projetos</span>
+    <div class="topbar-acoes">
+      <button class="topbar-btn" title="Abrir calendário" onclick="window.location.href='calendario.html'">📅</button>
+      <button class="topbar-btn btn-tema" id="btn-tema" title="Alternar tema">
+        <span class="icone-tema">🌙</span>
+      </button>
+    </div>
+  </header>
+
+ 
+  <main class="proj-content">
+
+  
+    <div class="filtro-wrap" id="filtro-wrap">
+      <button class="filtro-btn ativo" data-filtro="todos">Todos</button>
+      <button class="filtro-btn" data-filtro="ativo">🟢 Ativo</button>
+      <button class="filtro-btn" data-filtro="planejado">🔵 Planejado</button>
+      <button class="filtro-btn" data-filtro="ideia">🟠 Ideia</button>
+      <button class="filtro-btn" data-filtro="pausado">⚪ Pausado</button>
+      <button class="filtro-btn" data-filtro="concluido">🟣 Concluído</button>
+    </div>
+
+    
+    <div class="ativos-secao" id="ativos-secao" style="display:none;">
+      <span class="ativos-titulo">Trabalhando em</span>
+      <div id="ativos-lista"></div>
+    </div>
+
+    
+    <button class="btn-novo-projeto" onclick="abrirModalProjeto()">＋ Adicionar novo projeto</button>
+
+    
+    <div class="projetos-lista" id="projetos-lista">
+      
+    </div>
+
+  </main>
+
+  
+  <nav class="navbar">
+    <button class="nav-item" onclick="window.location.href='financeiro.html'">
+      <span class="nav-icon">💰</span>
+      <span class="nav-label">Finanças</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='home.html'">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='estudos.html'">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">Estudos</span>
+    </button>
+    <button class="nav-item ativo">
+      <span class="nav-icon">🎯</span>
+      <span class="nav-label">Projetos</span>
+    </button>
+  </nav>
+
+</div>
+
+
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-header">
+    <img src="assets/logo.png" alt="PRISMA" />
+    <span>PRISMA</span>
+    <button class="sidebar-fechar" onclick="fecharSidebar()">✕</button>
+  </div>
+
+  <nav class="sidebar-menu">
+    <button class="sidebar-item" onclick="window.location.href='calendario.html'">
+      <span class="sidebar-item-icone">📅</span> Calendário
+    </button>
+    <button class="sidebar-item" onclick="window.location.href='configuracoes.html'">
+      <span class="sidebar-item-icone">⚙️</span> Configurações
+    </button>
+    <button class="sidebar-item" onclick="sidebarSobre()">
+      <span class="sidebar-item-icone">ℹ️</span> Sobre o app
+    </button>
+
+    <div class="sidebar-divisor"></div>
+
+    <button class="sidebar-item sair" onclick="sidebarSair()">
+      <span class="sidebar-item-icone">🚪</span> Sair
+    </button>
+  </nav>
+
+</aside>
+
+
+
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <span class="modal-titulo">Novo projeto</span>
+      <button class="modal-fechar" onclick="fecharModalProjeto()">✕</button>
+    </div>
+
+    <div class="modal-campo">
+      <label>Nome do projeto</label>
+      <input type="text" id="prj-nome" placeholder="Ex: Reformar o quarto" maxlength="50" />
+    </div>
+
+    <div class="modal-campo">
+      <label>Descrição</label>
+      <textarea id="prj-desc" placeholder="Sobre o que é esse projeto..."></textarea>
+    </div>
+
+    <div class="modal-campo">
+      <label>Status inicial</label>
+      <select id="prj-status">
+        <option value="ideia">🟠 Ideia</option>
+        <option value="planejado">🔵 Planejado</option>
+        <option value="ativo">🟢 Ativo</option>
+        <option value="pausado">⚪ Pausado</option>
+        <option value="concluido">🟣 Concluído</option>
+      </select>
+    </div>
+
+    <div class="modal-campo">
+      <label>Prazo para terminar</label>
+      <input type="date" id="prj-prazo" />
+    </div>
+
+    <div class="modal-campo">
+      <label>Cor do projeto</label>
+      <div class="cor-picker-row">
+        <input type="color" id="prj-cor" class="cor-picker-input" value="#F06292" oninput="selecionarCorCustom()" />
+        <div class="cor-presets" id="cor-presets"></div>
+      </div>
+    </div>
+
+    <div class="modal-acoes">
+      <button class="modal-btn cancelar" onclick="fecharModalProjeto()">Cancelar</button>
+      <button class="modal-btn salvar" onclick="salvarProjeto()">Criar projeto</button>
+    </div>
+
+  </div>
+</div>
+
+
+
+<div class="projeto-detalhe" id="projeto-detalhe">
+
+  <div class="det-topbar">
+    <button class="det-voltar" onclick="fecharDetalheProjeto()">←</button>
+    <span class="det-titulo" id="det-titulo">Projeto</span>
+    <button class="det-del" onclick="deletarProjetoAtual()" title="Excluir projeto">🗑</button>
+  </div>
+
+  <div class="det-conteudo">
+
+  
+    <div class="det-cabecalho-card" id="det-cabecalho-card">
+      <div class="det-status-row">
+        <select class="det-status-select" id="det-status-select" onchange="mudarStatusProjeto()">
+          <option value="ideia">IDEIA</option>
+          <option value="planejado">PLANEJADO</option>
+          <option value="ativo">ATIVO</option>
+          <option value="pausado">PAUSADO</option>
+          <option value="concluido">CONCLUÍDO</option>
+        </select>
+        <span class="det-prazo-info" id="det-prazo-info"></span>
+      </div>
+      <div class="det-desc-texto" id="det-desc-texto"></div>
+    </div>
+
+  
+    <div class="det-abas-nav">
+      <button class="det-aba-btn ativa" data-det-aba="metas">✅ Metas</button>
+      <button class="det-aba-btn" data-det-aba="andamento">📈 Andamento</button>
+    </div>
+
+  
+    <div class="det-painel ativa" id="det-painel-metas">
+      <div class="meta-add-form">
+        <input type="text" id="nova-meta-input" placeholder="Nova meta do projeto..." maxlength="80" />
+        <button onclick="adicionarMetaProjeto()">＋</button>
+      </div>
+      <div class="metas-progresso-txt" id="metas-progresso-txt"></div>
+      <ul class="proj-metas-lista" id="proj-metas-lista"></ul>
+    </div>
+
+   
+    <div class="det-painel" id="det-painel-andamento">
+      <div class="andamento-add-form">
+        <textarea id="novo-andamento-input" placeholder="O que você fez ou decidiu hoje neste projeto?"></textarea>
+        <button onclick="adicionarAndamento()">Registrar atualização</button>
+      </div>
+      <div class="andamento-timeline" id="andamento-timeline"></div>
+    </div>
+
+  </div>
+</div>
+
+
+<script src="js/auth.js"></script>
+<script>protegerPagina();</script>
+<script src="js/sidebar.js"></script>
+<script>
+
+
+// MODO ESCURO
+const btnTema = document.getElementById('btn-tema');
+const icone   = btnTema.querySelector('.icone-tema');
+const htmlEl  = document.documentElement;
+
+function aplicarTema(escuro) {
+  escuro ? htmlEl.classList.add('dark') : htmlEl.classList.remove('dark');
+  icone.textContent = escuro ? '☀️' : '🌙';
+  localStorage.setItem('prisma-tema', escuro ? 'dark' : 'light');
+}
+aplicarTema(localStorage.getItem('prisma-tema') === 'dark');
+btnTema.addEventListener('click', () => aplicarTema(!htmlEl.classList.contains('dark')));
+
+
+// SCROLL TOPBAR
+window.addEventListener('scroll', () => {
+  document.getElementById('topbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+
+
+// HELPERS DE ARMAZENAMENTO 
+
+function carregar(chave, padrao) {
+  try { const v = JSON.parse(prismaGet(chave)); return v !== null ? v : padrao; }
+  catch { return padrao; }
+}
+function salvar(chave, valor) { prismaSet(chave, JSON.stringify(valor)); }
+
+
+
+// DADOS GLOBAIS
+let projetos = carregar('prisma-projetos', []);
+let filtroAtivo = 'todos';
+let projetoAtualId = null;
+let corSelecionadaModal = '#F06292';
+
+const CORES_PRESET = ['#F06292','#AB47BC','#7B2D8B','#42A5F5','#26A69A','#66BB6A','#FFB300','#EF5350'];
+
+const STATUS_LABEL = {
+  ativo: '🟢 Ativo', planejado: '🔵 Planejado', ideia: '🟠 Ideia',
+  pausado: '⚪ Pausado', concluido: '🟣 Concluído'
+};
+
+
+
+// FILTROS
+
+document.querySelectorAll('.filtro-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filtro-btn').forEach(b => b.classList.remove('ativo'));
+    btn.classList.add('ativo');
+    filtroAtivo = btn.dataset.filtro;
+    renderProjetos();
+  });
+});
+
+
+
+
+function formatarDataBR(dataISO) {
+  if (!dataISO) return '';
+  const [y, m, d] = dataISO.split('-');
+  return `${d}/${m}/${y}`;
+}
+
+
+
+function renderAtivos() {
+  const ativos = projetos.filter(p => p.status === 'ativo');
+  const secao = document.getElementById('ativos-secao');
+  const lista = document.getElementById('ativos-lista');
+
+  if (ativos.length === 0) {
+    secao.style.display = 'none';
+    return;
+  }
+
+  secao.style.display = 'flex';
+  lista.innerHTML = '';
+  lista.style.display = 'flex';
+  lista.style.flexDirection = 'column';
+  lista.style.gap = '8px';
+
+  ativos.forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'ativo-card';
+    div.style.borderLeftColor = p.cor;
+    div.onclick = () => abrirDetalheProjeto(p.id);
+    div.innerHTML = `
+      <span class="ativo-card-nome">${p.nome}</span>
+      ${p.prazo ? `<span class="ativo-card-prazo">até ${formatarDataBR(p.prazo)}</span>` : ''}
+    `;
+    lista.appendChild(div);
+  });
+}
+
+
+
+function renderProjetos() {
+  renderAtivos();
+
+  const lista = document.getElementById('projetos-lista');
+  const filtrados = filtroAtivo === 'todos'
+    ? projetos
+    : projetos.filter(p => p.status === filtroAtivo);
+
+  if (filtrados.length === 0) {
+    lista.innerHTML = '<div class="projetos-vazio">Nenhum projeto aqui ainda. 🎯</div>';
+    return;
+  }
+
+  lista.innerHTML = '';
+  filtrados.forEach(p => {
+    const feitas = p.metas.filter(m => m.feita).length;
+    const div = document.createElement('div');
+    div.className = 'projeto-card';
+    div.style.borderTopColor = p.cor;
+    div.onclick = () => abrirDetalheProjeto(p.id);
+    div.innerHTML = `
+      <div class="projeto-card-header">
+        <span class="projeto-card-nome">${p.nome}</span>
+        <span class="status-badge ${p.status}">${p.status}</span>
+      </div>
+      ${p.desc ? `<div class="projeto-card-desc">${p.desc}</div>` : ''}
+      <div class="projeto-card-footer">
+        <span class="projeto-card-prazo">${p.prazo ? '📅 ' + formatarDataBR(p.prazo) : ''}</span>
+        <span class="projeto-card-metas">${p.metas.length > 0 ? `${feitas}/${p.metas.length} metas` : ''}</span>
+      </div>
+    `;
+    lista.appendChild(div);
+  });
+}
+
+
+function renderCorPresets() {
+  const wrap = document.getElementById('cor-presets');
+  wrap.innerHTML = '';
+  CORES_PRESET.forEach(cor => {
+    const div = document.createElement('div');
+    div.className = 'cor-preset' + (cor.toLowerCase() === corSelecionadaModal.toLowerCase() ? ' selecionado' : '');
+    div.style.background = cor;
+    div.onclick = () => {
+      corSelecionadaModal = cor;
+      document.getElementById('prj-cor').value = cor;
+      renderCorPresets();
+    };
+    wrap.appendChild(div);
+  });
+}
+
+function selecionarCorCustom() {
+  corSelecionadaModal = document.getElementById('prj-cor').value;
+  renderCorPresets();
+}
+
+function abrirModalProjeto() {
+  document.getElementById('prj-nome').value = '';
+  document.getElementById('prj-desc').value = '';
+  document.getElementById('prj-status').value = 'ideia';
+  document.getElementById('prj-prazo').value = '';
+  corSelecionadaModal = '#F06292';
+  document.getElementById('prj-cor').value = corSelecionadaModal;
+  renderCorPresets();
+  document.getElementById('modal-overlay').classList.add('aberto');
+}
+
+function fecharModalProjeto() {
+  document.getElementById('modal-overlay').classList.remove('aberto');
+}
+
+function salvarProjeto() {
+  const nome   = document.getElementById('prj-nome').value.trim();
+  const desc   = document.getElementById('prj-desc').value.trim();
+  const status = document.getElementById('prj-status').value;
+  const prazo  = document.getElementById('prj-prazo').value;
+
+  if (!nome) { alert('Dê um nome ao projeto.'); return; }
+
+  projetos.unshift({
+    id: Date.now().toString(),
+    nome, desc, status, prazo,
+    cor: corSelecionadaModal,
+    metas: [],
+    andamento: []
+  });
+
+  salvar('prisma-projetos', projetos);
+  fecharModalProjeto();
+  renderProjetos();
+}
+
+
+
+function abrirDetalheProjeto(id) {
+  projetoAtualId = id;
+  const p = projetos.find(x => x.id === id);
+  if (!p) return;
+
+  document.getElementById('det-titulo').textContent = p.nome;
+  document.getElementById('det-desc-texto').textContent = p.desc || '';
+  document.getElementById('det-status-select').value = p.status;
+  document.getElementById('det-prazo-info').textContent = p.prazo ? `Prazo: ${formatarDataBR(p.prazo)}` : 'Sem prazo definido';
+  document.getElementById('det-cabecalho-card').style.background =
+    `linear-gradient(135deg, ${p.cor}, ${p.cor}CC)`;
+
+  mostrarDetAba('metas');
+  renderMetasProjeto();
+  renderAndamento();
+
+  document.getElementById('projeto-detalhe').classList.add('aberta');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharDetalheProjeto() {
+  document.getElementById('projeto-detalhe').classList.remove('aberta');
+  document.body.style.overflow = '';
+  projetoAtualId = null;
+  renderProjetos();
+}
+
+function deletarProjetoAtual() {
+  if (!projetoAtualId) return;
+  if (!confirm('Excluir este projeto e todo seu histórico?')) return;
+  projetos = projetos.filter(p => p.id !== projetoAtualId);
+  salvar('prisma-projetos', projetos);
+  fecharDetalheProjeto();
+}
+
+function mudarStatusProjeto() {
+  const p = projetos.find(x => x.id === projetoAtualId);
+  if (!p) return;
+  p.status = document.getElementById('det-status-select').value;
+  salvar('prisma-projetos', projetos);
+}
+
+
+document.querySelectorAll('.det-aba-btn').forEach(btn => {
+  btn.addEventListener('click', () => mostrarDetAba(btn.dataset.detAba));
+});
+
+function mostrarDetAba(aba) {
+  document.querySelectorAll('.det-aba-btn').forEach(b =>
+    b.classList.toggle('ativa', b.dataset.detAba === aba)
+  );
+  document.querySelectorAll('.det-painel').forEach(p =>
+    p.classList.toggle('ativa', p.id === 'det-painel-' + aba)
+  );
+}
+
+
+
+function adicionarMetaProjeto() {
+  const p = projetos.find(x => x.id === projetoAtualId);
+  if (!p) return;
+  const input = document.getElementById('nova-meta-input');
+  const texto = input.value.trim();
+  if (!texto) return;
+
+  p.metas.push({ id: Date.now().toString(), texto, feita: false });
+  salvar('prisma-projetos', projetos);
+  input.value = '';
+  renderMetasProjeto();
+}
+
+function renderMetasProjeto() {
+  const p = projetos.find(x => x.id === projetoAtualId);
+  if (!p) return;
+  const lista = document.getElementById('proj-metas-lista');
+  const progressoTxt = document.getElementById('metas-progresso-txt');
+
+  if (p.metas.length === 0) {
+    lista.innerHTML = '<div class="det-vazio">Nenhuma meta adicionada ainda.</div>';
+    progressoTxt.textContent = '';
+    return;
+  }
+
+  const feitas = p.metas.filter(m => m.feita).length;
+  progressoTxt.textContent = `${feitas} de ${p.metas.length} concluídas`;
+
+  lista.innerHTML = '';
+  p.metas.forEach(m => {
+    const li = document.createElement('li');
+    li.className = 'proj-meta-item' + (m.feita ? ' feita' : '');
+    li.innerHTML = `
+      <div class="proj-meta-checkbox"></div>
+      <span class="proj-meta-texto">${m.texto}</span>
+      <button class="proj-meta-del" onclick="event.stopPropagation(); removerMetaProjeto('${m.id}')">✕</button>
+    `;
+    li.addEventListener('click', (e) => {
+      if (e.target.classList.contains('proj-meta-del')) return;
+      m.feita = !m.feita;
+      salvar('prisma-projetos', projetos);
+      renderMetasProjeto();
+    });
+    lista.appendChild(li);
+  });
+}
+
+function removerMetaProjeto(metaId) {
+  const p = projetos.find(x => x.id === projetoAtualId);
+  if (!p) return;
+  p.metas = p.metas.filter(m => m.id !== metaId);
+  salvar('prisma-projetos', projetos);
+  renderMetasProjeto();
+}
+
+
+
+function adicionarAndamento() {
+  const p = projetos.find(x => x.id === projetoAtualId);
+  if (!p) return;
+  const input = document.getElementById('novo-andamento-input');
+  const texto = input.value.trim();
+  if (!texto) return;
+
+  const dataFmt = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'long', year:'numeric' });
+  p.andamento.unshift({ id: Date.now().toString(), texto, data: dataFmt });
+
+  salvar('prisma-projetos', projetos);
+  input.value = '';
+  renderAndamento();
+}
+
+function renderAndamento() {
+  const p = projetos.find(x => x.id === projetoAtualId);
+  if (!p) return;
+  const timeline = document.getElementById('andamento-timeline');
+
+  if (p.andamento.length === 0) {
+    timeline.innerHTML = '<div class="det-vazio">Nenhuma atualização registrada ainda.</div>';
+    return;
+  }
+
+  timeline.innerHTML = '';
+  p.andamento.forEach(a => {
+    const div = document.createElement('div');
+    div.className = 'andamento-item';
+    div.innerHTML = `
+      <div class="andamento-linha-wrap">
+        <div class="andamento-dot"></div>
+        <div class="andamento-linha"></div>
+      </div>
+      <div class="andamento-conteudo">
+        <div class="andamento-data">${a.data}</div>
+        <div class="andamento-texto">${a.texto}</div>
+        <button class="andamento-del" onclick="removerAndamento('${a.id}')">Remover</button>
+      </div>
+    `;
+    timeline.appendChild(div);
+  });
+}
+
+function removerAndamento(id) {
+  const p = projetos.find(x => x.id === projetoAtualId);
+  if (!p) return;
+  p.andamento = p.andamento.filter(a => a.id !== id);
+  salvar('prisma-projetos', projetos);
+  renderAndamento();
+}
+
+
+
+renderProjetos();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRISMA — Estudos</title>
+  <script>
+    if (localStorage.getItem('prisma-tema') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="style/estudos.css" />
+</head>
+<body>
+
+<div class="est-page">
+
+  <!-- ══ TOPBAR ══ -->
+  <header class="topbar" id="topbar">
+    <img src="assets/logo.png" alt="PRISMA" class="topbar-logo" id="logo-abre-sidebar" />
+
+    <nav class="topbar-nav-desktop">
+      <button class="topbar-nav-link" onclick="window.location.href='financeiro.html'">💰 Finanças</button>
+      <button class="topbar-nav-link" onclick="window.location.href='home.html'">🏠 Home</button>
+      <button class="topbar-nav-link ativo" onclick="window.location.href='estudos.html'">📚 Estudos</button>
+      <button class="topbar-nav-link" onclick="window.location.href='projetos.html'">🎯 Projetos</button>
+    </nav>
+
+    <span class="topbar-titulo">Estudos</span>
+    <div class="topbar-acoes">
+      <button class="topbar-btn" title="Abrir calendário" onclick="window.location.href='calendario.html'">📅</button>
+      <button class="topbar-btn btn-tema" id="btn-tema" title="Alternar tema">
+        <span class="icone-tema">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ══ CONTEÚDO ══ -->
+  <main class="est-content">
+
+    <!-- CARD "ESTUDAR HOJE" — vem do cronograma -->
+    <div class="hoje-card">
+      <span class="hoje-label">Estudar hoje</span>
+      <div class="hoje-dia" id="hoje-dia-nome">Carregando...</div>
+      <div class="hoje-lista" id="hoje-lista">
+        <!-- Preenchido pelo JS -->
+      </div>
+    </div>
+
+    <!-- ABAS INTERNAS -->
+    <div class="abas-container">
+
+      <div class="abas-nav">
+        <button class="aba-btn ativa" data-aba="cronograma">🗓️ Cronograma</button>
+        <button class="aba-btn" data-aba="materias">📘 Matérias</button>
+        <button class="aba-btn" data-aba="pomodoro">⏱️ Pomodoro</button>
+      </div>
+
+      <!-- ════ ABA: CRONOGRAMA ════ -->
+      <div class="aba-painel ativa" id="painel-cronograma">
+        <div class="dias-lista" id="dias-lista">
+          <!-- 7 dias gerados pelo JS -->
+        </div>
+      </div>
+
+      <!-- ════ ABA: MATÉRIAS ════ -->
+      <div class="aba-painel" id="painel-materias">
+
+        <div class="card">
+          <div class="card-body">
+            <div class="materia-form-add">
+              <input type="text" id="nova-materia-input" placeholder="Nome da nova matéria..." maxlength="40" />
+              <button onclick="adicionarMateria()">＋ Adicionar</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="materias-grid" id="materias-grid">
+          <!-- Cards de matéria gerados pelo JS -->
+        </div>
+
+      </div>
+
+      <!-- ════ ABA: POMODORO ════ -->
+      <div class="aba-painel" id="painel-pomodoro">
+        <div class="pomo-card">
+
+          <span class="pomo-modo-label" id="pomo-modo-label">Foco</span>
+
+          <div class="pomo-circulo-wrap">
+            <svg class="pomo-circulo-svg" width="220" height="220" viewBox="0 0 220 220">
+              <defs>
+                <linearGradient id="pomoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stop-color="#F06292" />
+                  <stop offset="100%" stop-color="#AB47BC" />
+                </linearGradient>
+              </defs>
+              <circle class="pomo-circulo-bg" cx="110" cy="110" r="95"></circle>
+              <circle class="pomo-circulo-fill" id="pomo-circulo-fill" cx="110" cy="110" r="95"
+                stroke-dasharray="596.9" stroke-dashoffset="0"></circle>
+            </svg>
+            <span class="pomo-tempo-display" id="pomo-tempo-display">25:00</span>
+          </div>
+
+          <div class="pomo-ciclos-dots" id="pomo-ciclos-dots"></div>
+
+          <div class="pomo-controles">
+            <button class="pomo-btn principal" id="pomo-btn-play" onclick="pomoToggle()">▶ Iniciar</button>
+            <button class="pomo-btn secundario" onclick="pomoReiniciar()">↺ Reiniciar</button>
+          </div>
+
+          <div class="pomo-config">
+            <span class="pomo-config-titulo">Configurar tempos (minutos)</span>
+            <div class="pomo-config-row">
+              <div class="pomo-config-campo">
+                <label>Foco</label>
+                <input type="number" id="pomo-cfg-foco" value="25" min="1" max="180" onchange="pomoAtualizarConfig()" />
+              </div>
+              <div class="pomo-config-campo">
+                <label>Descanso</label>
+                <input type="number" id="pomo-cfg-descanso" value="5" min="1" max="60" onchange="pomoAtualizarConfig()" />
+              </div>
+            </div>
+            <div class="pomo-config-row">
+              <div class="pomo-config-campo">
+                <label>Descanso longo</label>
+                <input type="number" id="pomo-cfg-descanso-longo" value="15" min="1" max="60" onchange="pomoAtualizarConfig()" />
+              </div>
+              <div class="pomo-config-campo">
+                <label>Ciclos até pausa longa</label>
+                <input type="number" id="pomo-cfg-ciclos" value="4" min="1" max="10" onchange="pomoAtualizarConfig()" />
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- fim abas-container -->
+  </main>
+
+  <!-- ══ NAVBAR ══ -->
+  <nav class="navbar">
+    <button class="nav-item" onclick="window.location.href='financeiro.html'">
+      <span class="nav-icon">💰</span>
+      <span class="nav-label">Finanças</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='home.html'">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-item ativo">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">Estudos</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='projetos.html'">
+      <span class="nav-icon">🎯</span>
+      <span class="nav-label">Projetos</span>
+    </button>
+  </nav>
+
+</div><!-- fim est-page -->
+
+
+<!-- ══ SIDEBAR (menu lateral) ══ -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-header">
+    <img src="assets/logo.png" alt="PRISMA" />
+    <span>PRISMA</span>
+    <button class="sidebar-fechar" onclick="fecharSidebar()">✕</button>
+  </div>
+
+  <nav class="sidebar-menu">
+    <button class="sidebar-item" onclick="window.location.href='calendario.html'">
+      <span class="sidebar-item-icone">📅</span> Calendário
+    </button>
+    <button class="sidebar-item" onclick="window.location.href='configuracoes.html'">
+      <span class="sidebar-item-icone">⚙️</span> Configurações
+    </button>
+    <button class="sidebar-item" onclick="sidebarSobre()">
+      <span class="sidebar-item-icone">ℹ️</span> Sobre o app
+    </button>
+
+    <div class="sidebar-divisor"></div>
+
+    <button class="sidebar-item sair" onclick="sidebarSair()">
+      <span class="sidebar-item-icone">🚪</span> Sair
+    </button>
+  </nav>
+
+</aside>
+
+
+<!-- ══ TELA DE DETALHE DA MATÉRIA (abre por cima de tudo) ══ -->
+<div class="materia-detalhe" id="materia-detalhe">
+
+  <div class="detalhe-topbar">
+    <button class="detalhe-voltar" onclick="fecharDetalheMateria()">←</button>
+    <span class="detalhe-titulo" id="detalhe-titulo">Matéria</span>
+    <button class="detalhe-del-materia" onclick="deletarMateriaAtual()" title="Excluir matéria">🗑</button>
+  </div>
+
+  <div class="detalhe-conteudo">
+
+    <!-- Botões: registrar tópico novo / ver resumo geral -->
+    <div class="detalhe-botoes">
+      <button id="btn-ver-topicos" class="ativo" onclick="mostrarSecaoMateria('topicos')">📝 Tópicos</button>
+      <button id="btn-ver-resumo" onclick="mostrarSecaoMateria('resumo')">📖 Resumo geral</button>
+    </div>
+
+    <!-- SEÇÃO: registrar + listar tópicos -->
+    <div id="secao-topicos">
+
+      <div class="card" style="margin-bottom: var(--espaco-md);">
+        <div class="card-header"><span class="card-titulo">Registrar tópico de hoje</span></div>
+        <div class="card-body">
+          <div class="registro-topico-form">
+            <input type="text" id="topico-nome-input" placeholder="Nome do tópico (ex: Equações de 2º grau)" maxlength="60" />
+            <textarea id="topico-resumo-input" placeholder="Escreva um resumo do que você estudou..."></textarea>
+            <button onclick="salvarTopico()" style="
+              padding:0.65rem;border:none;border-radius:var(--borda-pill);
+              background:var(--gradiente);color:#fff;font-weight:600;cursor:pointer;">
+              Salvar tópico
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="topicos-lista" id="topicos-lista">
+        <!-- Tópicos gerados pelo JS -->
+      </div>
+
+    </div>
+
+    <!-- SEÇÃO: resumo geral da matéria -->
+    <div id="secao-resumo" style="display:none;">
+      <div class="resumo-geral-box">
+        <textarea id="resumo-geral-textarea" placeholder="Escreva aqui um resumo geral de tudo que já estudou nesta matéria..."
+          onblur="salvarResumoGeral()"></textarea>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<script src="js/auth.js"></script>
+<script>protegerPagina();</script>
+<script src="js/sidebar.js"></script>
+<script>
+
+// ══════════════════════════════════════
+// MODO ESCURO
+// ══════════════════════════════════════
+const btnTema = document.getElementById('btn-tema');
+const icone   = btnTema.querySelector('.icone-tema');
+const htmlEl  = document.documentElement;
+
+function aplicarTema(escuro) {
+  escuro ? htmlEl.classList.add('dark') : htmlEl.classList.remove('dark');
+  icone.textContent = escuro ? '☀️' : '🌙';
+  localStorage.setItem('prisma-tema', escuro ? 'dark' : 'light');
+}
+aplicarTema(localStorage.getItem('prisma-tema') === 'dark');
+btnTema.addEventListener('click', () => aplicarTema(!htmlEl.classList.contains('dark')));
+
+
+// ══════════════════════════════════════
+// SCROLL TOPBAR
+// ══════════════════════════════════════
+window.addEventListener('scroll', () => {
+  document.getElementById('topbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+
+// ══════════════════════════════════════
+// ABAS PRINCIPAIS
+// ══════════════════════════════════════
+document.querySelectorAll('.abas-nav > .aba-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.abas-nav > .aba-btn').forEach(b => b.classList.remove('ativa'));
+    document.querySelectorAll('.aba-painel').forEach(p => p.classList.remove('ativa'));
+    btn.classList.add('ativa');
+    document.getElementById('painel-' + btn.dataset.aba).classList.add('ativa');
+  });
+});
+
+
+// ══════════════════════════════════════
+// HELPERS DE ARMAZENAMENTO (isolados por conta — ver js/auth.js)
+// ══════════════════════════════════════
+function carregar(chave, padrao) {
+  try { const v = JSON.parse(prismaGet(chave)); return v !== null ? v : padrao; }
+  catch { return padrao; }
+}
+function salvar(chave, valor) { prismaSet(chave, JSON.stringify(valor)); }
+
+
+// ══════════════════════════════════════
+// DADOS GLOBAIS
+// ══════════════════════════════════════
+const DIAS = ['Domingo','Segunda-feira','Terça-feira','Quarta-feira','Quinta-feira','Sexta-feira','Sábado'];
+
+// cronograma = { 0: [{materia, minutos}], 1: [...], ... } chave = índice do dia (0=Domingo)
+let cronograma = carregar('prisma-cronograma', { 0:[], 1:[], 2:[], 3:[], 4:[], 5:[], 6:[] });
+
+// materias = [{ id, nome, resumoGeral, topicos: [{id, nome, resumo, data}] }]
+let materias = carregar('prisma-materias', []);
+
+let materiaAtualId = null;
+
+
+// ══════════════════════════════════════
+// CARD "ESTUDAR HOJE"
+// ══════════════════════════════════════
+function renderHoje() {
+  const hojeIndice = new Date().getDay();
+  document.getElementById('hoje-dia-nome').textContent = DIAS[hojeIndice];
+
+  const itensHoje = cronograma[hojeIndice] || [];
+  const lista = document.getElementById('hoje-lista');
+
+  if (itensHoje.length === 0) {
+    lista.innerHTML = '<div class="hoje-vazio">Nada planejado para hoje. Adicione no Cronograma! 🌸</div>';
+    return;
+  }
+
+  lista.innerHTML = '';
+  itensHoje.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'hoje-item';
+    div.innerHTML = `
+      <span class="hoje-item-materia">${item.materia}</span>
+      <span class="hoje-item-tempo">${item.minutos} min</span>
+    `;
+    lista.appendChild(div);
+  });
+}
+
+
+// ══════════════════════════════════════
+// ABA CRONOGRAMA
+// ══════════════════════════════════════
+function opcoesDeMaterias() {
+  if (materias.length === 0) {
+    return '<option value="">Crie uma matéria primeiro</option>';
+  }
+  return materias.map(m => `<option value="${m.nome}">${m.nome}</option>`).join('');
+}
+
+function renderCronograma() {
+  const container = document.getElementById('dias-lista');
+  container.innerHTML = '';
+  const hojeIndice = new Date().getDay();
+
+  DIAS.forEach((nomeDia, indice) => {
+    const itens = cronograma[indice] || [];
+    const totalMin = itens.reduce((a, i) => a + Number(i.minutos), 0);
+
+    const div = document.createElement('div');
+    div.className = 'dia-card';
+    div.id = 'dia-card-' + indice;
+
+    div.innerHTML = `
+      <div class="dia-header" onclick="toggleDia(${indice})">
+        <span class="dia-nome ${indice === hojeIndice ? 'hoje-destaque' : ''}">${nomeDia}</span>
+        <div class="dia-resumo">
+          ${totalMin > 0 ? `<span class="dia-total-tempo">${totalMin} min</span>` : ''}
+          <span class="dia-seta">▼</span>
+        </div>
+      </div>
+      <div class="dia-conteudo">
+        <div class="dia-item-lista" id="dia-itens-${indice}">
+          ${itens.length === 0
+            ? '<div class="dia-vazio-txt">Nenhuma matéria adicionada</div>'
+            : itens.map(item => `
+              <div class="dia-item">
+                <div class="dia-item-info">
+                  <span class="dia-item-materia">${item.materia}</span>
+                  <span class="dia-item-tempo">${item.minutos} minutos</span>
+                </div>
+                <button class="dia-item-del" onclick="removerItemCronograma(${indice}, '${item.id}')">✕</button>
+              </div>
+            `).join('')
+          }
+        </div>
+        <div class="dia-add-form">
+          <select id="select-materia-${indice}">${opcoesDeMaterias()}</select>
+          <input type="number" id="input-tempo-${indice}" placeholder="min" min="5" step="5" />
+          <button class="dia-add-btn" onclick="adicionarItemCronograma(${indice})">＋</button>
+        </div>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function toggleDia(indice) {
+  document.getElementById('dia-card-' + indice).classList.toggle('aberto');
+}
+
+function adicionarItemCronograma(indice) {
+  const select = document.getElementById('select-materia-' + indice);
+  const input  = document.getElementById('input-tempo-' + indice);
+  const materia = select.value;
+  const minutos = parseInt(input.value);
+
+  if (!materia) { alert('Escolha uma matéria (ou crie uma na aba Matérias).'); return; }
+  if (!minutos || minutos <= 0) { alert('Informe um tempo válido em minutos.'); return; }
+
+  cronograma[indice].push({ id: Date.now().toString(), materia, minutos });
+  salvar('prisma-cronograma', cronograma);
+  renderCronograma();
+  document.getElementById('dia-card-' + indice).classList.add('aberto');
+  renderHoje();
+}
+
+function removerItemCronograma(indice, itemId) {
+  cronograma[indice] = cronograma[indice].filter(i => i.id !== itemId);
+  salvar('prisma-cronograma', cronograma);
+  renderCronograma();
+  document.getElementById('dia-card-' + indice).classList.add('aberto');
+  renderHoje();
+}
+
+
+// ══════════════════════════════════════
+// ABA MATÉRIAS
+// ══════════════════════════════════════
+function adicionarMateria() {
+  const input = document.getElementById('nova-materia-input');
+  const nome = input.value.trim();
+  if (!nome) return;
+
+  materias.push({ id: Date.now().toString(), nome, resumoGeral: '', topicos: [] });
+  salvar('prisma-materias', materias);
+  input.value = '';
+  renderMaterias();
+  renderCronograma();
+}
+
+function renderMaterias() {
+  const grid = document.getElementById('materias-grid');
+
+  if (materias.length === 0) {
+    grid.innerHTML = '<div class="materias-vazio">Nenhuma matéria criada ainda. Adicione acima! 📘</div>';
+    return;
+  }
+
+  grid.innerHTML = '';
+  materias.forEach(m => {
+    const div = document.createElement('div');
+    div.className = 'materia-card';
+    div.onclick = () => abrirDetalheMateria(m.id);
+    div.innerHTML = `
+      <div class="materia-card-info">
+        <span class="materia-card-nome">${m.nome}</span>
+        <span class="materia-card-meta">${m.topicos.length} tópico${m.topicos.length !== 1 ? 's' : ''} registrado${m.topicos.length !== 1 ? 's' : ''}</span>
+      </div>
+      <span class="materia-card-seta">→</span>
+    `;
+    grid.appendChild(div);
+  });
+}
+
+function deletarMateriaAtual() {
+  if (!materiaAtualId) return;
+  if (!confirm('Excluir esta matéria e todos os tópicos registrados?')) return;
+  materias = materias.filter(m => m.id !== materiaAtualId);
+  salvar('prisma-materias', materias);
+  fecharDetalheMateria();
+  renderMaterias();
+  renderCronograma();
+}
+
+
+// ── Detalhe da matéria (tela cheia) ──
+function abrirDetalheMateria(id) {
+  materiaAtualId = id;
+  const m = materias.find(x => x.id === id);
+  if (!m) return;
+
+  document.getElementById('detalhe-titulo').textContent = m.nome;
+  document.getElementById('resumo-geral-textarea').value = m.resumoGeral || '';
+  mostrarSecaoMateria('topicos');
+  renderTopicos();
+
+  document.getElementById('materia-detalhe').classList.add('aberta');
+  document.body.style.overflow = 'hidden';
+}
+
+function fecharDetalheMateria() {
+  document.getElementById('materia-detalhe').classList.remove('aberta');
+  document.body.style.overflow = '';
+  materiaAtualId = null;
+}
+
+function mostrarSecaoMateria(secao) {
+  const btnTopicos = document.getElementById('btn-ver-topicos');
+  const btnResumo  = document.getElementById('btn-ver-resumo');
+  const secTopicos = document.getElementById('secao-topicos');
+  const secResumo  = document.getElementById('secao-resumo');
+
+  if (secao === 'topicos') {
+    btnTopicos.classList.add('ativo'); btnResumo.classList.remove('ativo');
+    secTopicos.style.display = 'block'; secResumo.style.display = 'none';
+  } else {
+    btnResumo.classList.add('ativo'); btnTopicos.classList.remove('ativo');
+    secResumo.style.display = 'block'; secTopicos.style.display = 'none';
+  }
+}
+
+function salvarTopico() {
+  const m = materias.find(x => x.id === materiaAtualId);
+  if (!m) return;
+
+  const nome   = document.getElementById('topico-nome-input').value.trim();
+  const resumo = document.getElementById('topico-resumo-input').value.trim();
+
+  if (!nome) { alert('Dê um nome ao tópico.'); return; }
+
+  const hoje = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
+  m.topicos.unshift({ id: Date.now().toString(), nome, resumo, data: hoje });
+
+  salvar('prisma-materias', materias);
+  document.getElementById('topico-nome-input').value = '';
+  document.getElementById('topico-resumo-input').value = '';
+  renderTopicos();
+  renderMaterias();
+}
+
+function renderTopicos() {
+  const m = materias.find(x => x.id === materiaAtualId);
+  const lista = document.getElementById('topicos-lista');
+  if (!m) return;
+
+  if (m.topicos.length === 0) {
+    lista.innerHTML = '<div class="materias-vazio">Nenhum tópico registrado ainda.</div>';
+    return;
+  }
+
+  lista.innerHTML = '';
+  m.topicos.forEach(t => {
+    const div = document.createElement('div');
+    div.className = 'topico-item';
+    div.innerHTML = `
+      <div class="topico-header">
+        <span class="topico-nome">${t.nome}</span>
+        <span class="topico-data">${t.data}</span>
+      </div>
+      ${t.resumo ? `<div class="topico-resumo-texto">${t.resumo}</div>` : ''}
+      <div class="topico-acoes">
+        <button class="topico-del" onclick="removerTopico('${t.id}')">🗑 Remover</button>
+      </div>
+    `;
+    lista.appendChild(div);
+  });
+}
+
+function removerTopico(topicoId) {
+  const m = materias.find(x => x.id === materiaAtualId);
+  if (!m) return;
+  m.topicos = m.topicos.filter(t => t.id !== topicoId);
+  salvar('prisma-materias', materias);
+  renderTopicos();
+  renderMaterias();
+}
+
+function salvarResumoGeral() {
+  const m = materias.find(x => x.id === materiaAtualId);
+  if (!m) return;
+  m.resumoGeral = document.getElementById('resumo-geral-textarea').value;
+  salvar('prisma-materias', materias);
+}
+
+
+// ══════════════════════════════════════
+// POMODORO
+// ══════════════════════════════════════
+let pomoConfig = carregar('prisma-pomo-config', { foco: 25, descanso: 5, descansoLongo: 15, ciclos: 4 });
+let pomoModo = 'foco';
+let pomoCicloAtual = 0;
+let pomoSegundosRestantes = pomoConfig.foco * 60;
+let pomoTotalSegundos = pomoConfig.foco * 60;
+let pomoRodando = false;
+let pomoIntervalo = null;
+
+const RAIO_CIRCULO = 95;
+const CIRCUNFERENCIA = 2 * Math.PI * RAIO_CIRCULO;
+
+document.getElementById('pomo-cfg-foco').value           = pomoConfig.foco;
+document.getElementById('pomo-cfg-descanso').value       = pomoConfig.descanso;
+document.getElementById('pomo-cfg-descanso-longo').value = pomoConfig.descansoLongo;
+document.getElementById('pomo-cfg-ciclos').value         = pomoConfig.ciclos;
+
+function pomoAtualizarConfig() {
+  pomoConfig.foco          = parseInt(document.getElementById('pomo-cfg-foco').value) || 25;
+  pomoConfig.descanso      = parseInt(document.getElementById('pomo-cfg-descanso').value) || 5;
+  pomoConfig.descansoLongo = parseInt(document.getElementById('pomo-cfg-descanso-longo').value) || 15;
+  pomoConfig.ciclos        = parseInt(document.getElementById('pomo-cfg-ciclos').value) || 4;
+  salvar('prisma-pomo-config', pomoConfig);
+
+  if (!pomoRodando) {
+    pomoDefinirTempoPorModo();
+    pomoAtualizarDisplay();
+  }
+  pomoRenderCiclos();
+}
+
+function pomoDefinirTempoPorModo() {
+  const minutos = pomoModo === 'foco' ? pomoConfig.foco
+                : pomoModo === 'descanso' ? pomoConfig.descanso
+                : pomoConfig.descansoLongo;
+  pomoSegundosRestantes = minutos * 60;
+  pomoTotalSegundos = minutos * 60;
+}
+
+function pomoFormatarTempo(seg) {
+  const m = Math.floor(seg / 60).toString().padStart(2, '0');
+  const s = (seg % 60).toString().padStart(2, '0');
+  return `${m}:${s}`;
+}
+
+function pomoAtualizarDisplay() {
+  document.getElementById('pomo-tempo-display').textContent = pomoFormatarTempo(pomoSegundosRestantes);
+
+  const labelModo = pomoModo === 'foco' ? 'Foco' : pomoModo === 'descanso' ? 'Descanso' : 'Descanso longo';
+  document.getElementById('pomo-modo-label').textContent = labelModo;
+
+  const fracaoRestante = pomoSegundosRestantes / pomoTotalSegundos;
+  const offset = CIRCUNFERENCIA * (1 - fracaoRestante);
+  const circulo = document.getElementById('pomo-circulo-fill');
+  circulo.setAttribute('stroke-dasharray', CIRCUNFERENCIA.toFixed(1));
+  circulo.setAttribute('stroke-dashoffset', offset.toFixed(1));
+}
+
+function pomoRenderCiclos() {
+  const wrap = document.getElementById('pomo-ciclos-dots');
+  wrap.innerHTML = '';
+  for (let i = 0; i < pomoConfig.ciclos; i++) {
+    const dot = document.createElement('span');
+    dot.className = 'pomo-dot' + (i < pomoCicloAtual ? ' feito' : '');
+    wrap.appendChild(dot);
+  }
+}
+
+function pomoToggle() {
+  pomoRodando ? pomoPausar() : pomoIniciar();
+}
+
+function pomoIniciar() {
+  pomoRodando = true;
+  document.getElementById('pomo-btn-play').textContent = '⏸ Pausar';
+
+  pomoIntervalo = setInterval(() => {
+    pomoSegundosRestantes--;
+    pomoAtualizarDisplay();
+
+    if (pomoSegundosRestantes <= 0) {
+      pomoTocarAlarme();
+      pomoProximoModo();
+    }
+  }, 1000);
+}
+
+function pomoPausar() {
+  pomoRodando = false;
+  document.getElementById('pomo-btn-play').textContent = '▶ Continuar';
+  clearInterval(pomoIntervalo);
+}
+
+function pomoReiniciar() {
+  pomoPausar();
+  pomoModo = 'foco';
+  pomoCicloAtual = 0;
+  pomoDefinirTempoPorModo();
+  pomoAtualizarDisplay();
+  pomoRenderCiclos();
+  document.getElementById('pomo-btn-play').textContent = '▶ Iniciar';
+}
+
+function pomoProximoModo() {
+  clearInterval(pomoIntervalo);
+
+  if (pomoModo === 'foco') {
+    pomoCicloAtual++;
+    if (pomoCicloAtual >= pomoConfig.ciclos) {
+      pomoModo = 'descansoLongo';
+      pomoCicloAtual = 0;
+    } else {
+      pomoModo = 'descanso';
+    }
+  } else {
+    pomoModo = 'foco';
+  }
+
+  pomoDefinirTempoPorModo();
+  pomoAtualizarDisplay();
+  pomoRenderCiclos();
+
+  pomoIntervalo = setInterval(() => {
+    pomoSegundosRestantes--;
+    pomoAtualizarDisplay();
+    if (pomoSegundosRestantes <= 0) {
+      pomoTocarAlarme();
+      pomoProximoModo();
+    }
+  }, 1000);
+}
+
+function pomoTocarAlarme() {
+  // Respeita a preferência salva em Configurações → Preferências → Som do Pomodoro.
+  // Se a pessoa desativou, o ciclo troca normalmente, só sem o bipe sonoro.
+  const somAtivado = prismaGet('prisma-pomo-som') !== 'off';
+  if (!somAtivado) return;
+
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const tocarBip = (tempoInicio, freq) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = 'sine';
+      gain.gain.setValueAtTime(0.2, ctx.currentTime + tempoInicio);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + tempoInicio + 0.4);
+      osc.start(ctx.currentTime + tempoInicio);
+      osc.stop(ctx.currentTime + tempoInicio + 0.4);
+    };
+    tocarBip(0, 880);
+    tocarBip(0.5, 880);
+    tocarBip(1.0, 1100);
+  } catch (e) {
+    console.log('Áudio não disponível:', e);
+  }
+}
+
+
+// ══════════════════════════════════════
+// INICIALIZAÇÃO
+// ══════════════════════════════════════
+renderHoje();
+renderCronograma();
+renderMaterias();
+pomoAtualizarDisplay();
+pomoRenderCiclos();
+
+</script>
+</body>
+</html>

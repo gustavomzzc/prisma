@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRISMA — Calendário</title>
+  <script>
+    if (localStorage.getItem('prisma-tema') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="style/calendario.css" />
+</head>
+<body>
+
+<div class="cal-page">
+
+  <!-- ══ TOPBAR ══ -->
+  <header class="topbar" id="topbar">
+    <button class="topbar-btn topbar-btn-voltar" onclick="window.location.href='home.html'" title="Voltar">←</button>
+
+    <img src="assets/logo.png" alt="PRISMA" class="topbar-logo topbar-logo-desktop" id="logo-abre-sidebar" />
+
+    <nav class="topbar-nav-desktop">
+      <button class="topbar-nav-link" onclick="window.location.href='financeiro.html'">💰 Finanças</button>
+      <button class="topbar-nav-link" onclick="window.location.href='home.html'">🏠 Home</button>
+      <button class="topbar-nav-link" onclick="window.location.href='estudos.html'">📚 Estudos</button>
+      <button class="topbar-nav-link" onclick="window.location.href='projetos.html'">🎯 Projetos</button>
+    </nav>
+
+    <span class="topbar-titulo">Calendário</span>
+    <div class="topbar-acoes">
+      <button class="topbar-btn btn-tema" id="btn-tema" title="Alternar tema">
+        <span class="icone-tema">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ══ CONTEÚDO ══ -->
+  <main class="cal-content">
+
+    <!-- Navegação de mês -->
+    <div class="mes-nav">
+      <button class="mes-nav-btn" onclick="mudarMes(-1)">‹</button>
+      <div class="mes-nav-titulo" onclick="irParaHoje()">
+        <span class="mes-nome" id="mes-nome">Junho</span>
+        <span class="mes-ano" id="mes-ano">2026</span>
+      </div>
+      <button class="mes-nav-btn" onclick="mudarMes(1)">›</button>
+    </div>
+
+    <div class="linha-botoes-topo">
+      <button class="btn-hoje" onclick="irParaHoje()">📍 Hoje</button>
+      <button class="btn-metas-semanais" onclick="abrirMetasSemanais()">🎯 Metas da semana</button>
+    </div>
+
+    <!-- Grid do calendário -->
+    <div class="cal-card">
+      <div class="semana-header">
+        <span>Dom</span><span>Seg</span><span>Ter</span><span>Qua</span><span>Qui</span><span>Sex</span><span>Sáb</span>
+      </div>
+      <div class="dias-grid" id="dias-grid">
+        <!-- Gerado pelo JS -->
+      </div>
+    </div>
+
+    <!-- Legenda -->
+    <div class="legenda-feriado">
+      <span class="legenda-dot"></span>
+      <span>Feriado nacional</span>
+    </div>
+
+    <!-- Aviso de feriado no dia selecionado -->
+    <div class="feriado-aviso" id="feriado-aviso" style="display:none;">
+      <span class="feriado-aviso-icon">🎉</span>
+      <span id="feriado-aviso-texto"></span>
+    </div>
+
+    <!-- Eventos do dia selecionado -->
+    <div class="eventos-secao">
+      <div class="eventos-secao-header">
+        <span class="eventos-secao-titulo">Eventos do dia</span>
+        <span class="eventos-secao-data" id="eventos-data-label">—</span>
+      </div>
+
+      <button class="btn-novo-evento" onclick="abrirModalEvento()">＋ Agendar algo neste dia</button>
+
+      <div class="eventos-lista" id="eventos-lista">
+        <!-- Gerado pelo JS -->
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ══ NAVBAR ══ -->
+  <nav class="navbar">
+    <button class="nav-item" onclick="window.location.href='financeiro.html'">
+      <span class="nav-icon">💰</span>
+      <span class="nav-label">Finanças</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='home.html'">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='estudos.html'">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">Estudos</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='projetos.html'">
+      <span class="nav-icon">🎯</span>
+      <span class="nav-label">Projetos</span>
+    </button>
+  </nav>
+
+</div>
+
+
+<!-- ══ SIDEBAR (menu lateral) ══ -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-header">
+    <img src="assets/logo.png" alt="PRISMA" />
+    <span>PRISMA</span>
+    <button class="sidebar-fechar" onclick="fecharSidebar()">✕</button>
+  </div>
+
+  <nav class="sidebar-menu">
+    <button class="sidebar-item" onclick="window.location.href='calendario.html'">
+      <span class="sidebar-item-icone">📅</span> Calendário
+    </button>
+    <button class="sidebar-item" onclick="window.location.href='configuracoes.html'">
+      <span class="sidebar-item-icone">⚙️</span> Configurações
+    </button>
+    <button class="sidebar-item" onclick="sidebarSobre()">
+      <span class="sidebar-item-icone">ℹ️</span> Sobre o app
+    </button>
+
+    <div class="sidebar-divisor"></div>
+
+    <button class="sidebar-item sair" onclick="sidebarSair()">
+      <span class="sidebar-item-icone">🚪</span> Sair
+    </button>
+  </nav>
+
+</aside>
+
+
+<!-- ══ MODAL: NOVO / EDITAR EVENTO ══ -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal-box">
+
+    <div class="modal-header">
+      <span class="modal-titulo" id="modal-titulo-texto">Novo evento</span>
+      <button class="modal-fechar" onclick="fecharModalEvento()">✕</button>
+    </div>
+
+    <div class="modal-campo">
+      <label>O que você vai fazer?</label>
+      <input type="text" id="evt-titulo" placeholder="Ex: Consulta médica" maxlength="60" />
+    </div>
+
+    <div class="modal-row-2">
+      <div class="modal-campo">
+        <label>Início</label>
+        <input type="time" id="evt-inicio" value="08:00" />
+      </div>
+      <div class="modal-campo">
+        <label>Fim</label>
+        <input type="time" id="evt-fim" value="09:00" />
+      </div>
+    </div>
+
+    <div class="modal-campo">
+      <label>Cor do dia</label>
+      <div class="cor-picker-row">
+        <input type="color" id="evt-cor" class="cor-picker-input" value="#F06292" oninput="selecionarCorCustom()" />
+        <div class="cor-presets" id="cor-presets">
+          <!-- Gerado pelo JS -->
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-campo">
+      <label>Observações</label>
+      <textarea id="evt-obs" placeholder="Alguma anotação sobre esse evento..."></textarea>
+    </div>
+
+    <div class="modal-acoes">
+      <button class="modal-btn cancelar" onclick="fecharModalEvento()">Cancelar</button>
+      <button class="modal-btn salvar" onclick="salvarEvento()">Salvar</button>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ══ TELA: METAS SEMANAIS ══ -->
+<div class="metas-semanais-tela" id="metas-semanais-tela">
+
+  <div class="ms-topbar">
+    <button class="ms-voltar" onclick="fecharMetasSemanais()">←</button>
+    <span class="ms-titulo">Metas da semana</span>
+  </div>
+
+  <div class="ms-periodo-label" id="ms-periodo-label">—</div>
+
+  <div class="ms-conteudo" id="ms-conteudo">
+    <!-- 7 cards de dia gerados pelo js/metas-semanais.js -->
+  </div>
+
+  <div class="ms-reset-info">
+    🔄 Suas metas resetam automaticamente todo domingo,<br/>para você recomeçar a semana organizada.
+  </div>
+
+</div>
+
+
+<script src="js/auth.js"></script>
+<script>protegerPagina();</script>
+<script src="js/sidebar.js"></script>
+<script>
+
+// ══════════════════════════════════════
+// MODO ESCURO
+// ══════════════════════════════════════
+const btnTema = document.getElementById('btn-tema');
+const icone   = btnTema.querySelector('.icone-tema');
+const htmlEl  = document.documentElement;
+
+function aplicarTema(escuro) {
+  escuro ? htmlEl.classList.add('dark') : htmlEl.classList.remove('dark');
+  icone.textContent = escuro ? '☀️' : '🌙';
+  localStorage.setItem('prisma-tema', escuro ? 'dark' : 'light');
+}
+aplicarTema(localStorage.getItem('prisma-tema') === 'dark');
+btnTema.addEventListener('click', () => aplicarTema(!htmlEl.classList.contains('dark')));
+
+
+// ══════════════════════════════════════
+// SCROLL TOPBAR
+// ══════════════════════════════════════
+window.addEventListener('scroll', () => {
+  document.getElementById('topbar').classList.toggle('scrolled', window.scrollY > 30);
+});
+
+
+// ══════════════════════════════════════
+// HELPERS DE ARMAZENAMENTO (isolados por conta — ver js/auth.js)
+// ══════════════════════════════════════
+function carregar(chave, padrao) {
+  try { const v = JSON.parse(prismaGet(chave)); return v !== null ? v : padrao; }
+  catch { return padrao; }
+}
+function salvar(chave, valor) { prismaSet(chave, JSON.stringify(valor)); }
+
+
+// ══════════════════════════════════════
+// FERIADOS NACIONAIS DO BRASIL
+// ══════════════════════════════════════
+// Calcula a data da Páscoa (algoritmo de Gauss) para achar feriados móveis
+function calcularPascoa(ano) {
+  const a = ano % 19, b = Math.floor(ano / 100), c = ano % 100;
+  const d = Math.floor(b / 4), e = b % 4;
+  const f = Math.floor((b + 8) / 25), g = Math.floor((b - f + 1) / 3);
+  const h = (19 * a + b - d - g + 15) % 30;
+  const i = Math.floor(c / 4), k = c % 4;
+  const l = (32 + 2 * e + 2 * i - h - k) % 7;
+  const m = Math.floor((a + 11 * h + 22 * l) / 451);
+  const mes = Math.floor((h + l - 7 * m + 114) / 31);
+  const dia = ((h + l - 7 * m + 114) % 31) + 1;
+  return new Date(ano, mes - 1, dia);
+}
+
+function somarDias(data, dias) {
+  const d = new Date(data);
+  d.setDate(d.getDate() + dias);
+  return d;
+}
+
+function formatarChave(data) {
+  // chave única "YYYY-MM-DD" usada para indexar feriados/eventos
+  const y = data.getFullYear();
+  const m = (data.getMonth() + 1).toString().padStart(2, '0');
+  const d = data.getDate().toString().padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function gerarFeriados(ano) {
+  const pascoa = calcularPascoa(ano);
+  const carnaval = somarDias(pascoa, -47);
+  const sextaSanta = somarDias(pascoa, -2);
+  const corpusChristi = somarDias(pascoa, 60);
+
+  const feriados = {};
+  const add = (data, nome) => { feriados[formatarChave(data)] = nome; };
+
+  add(new Date(ano, 0, 1),  'Ano Novo');
+  add(carnaval,             'Carnaval');
+  add(sextaSanta,           'Sexta-feira Santa');
+  add(new Date(ano, 3, 21), 'Tiradentes');
+  add(new Date(ano, 4, 1),  'Dia do Trabalho');
+  add(corpusChristi,        'Corpus Christi');
+  add(new Date(ano, 8, 7),  'Independência do Brasil');
+  add(new Date(ano, 9, 12), 'Nossa Sr.ª Aparecida');
+  add(new Date(ano, 10, 2), 'Finados');
+  add(new Date(ano, 10, 15),'Proclamação da República');
+  add(new Date(ano, 10, 20),'Consciência Negra');
+  add(new Date(ano, 11, 25),'Natal');
+
+  return feriados;
+}
+
+// Cache de feriados por ano (recalcula ao mudar de ano)
+let feriadosCache = {};
+function getFeriados(ano) {
+  if (!feriadosCache[ano]) feriadosCache[ano] = gerarFeriados(ano);
+  return feriadosCache[ano];
+}
+
+
+// ══════════════════════════════════════
+// ESTADO DO CALENDÁRIO
+// ══════════════════════════════════════
+const NOMES_MES = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+
+let hoje = new Date();
+let mesAtual = hoje.getMonth();
+let anoAtual = hoje.getFullYear();
+let diaSelecionadoChave = formatarChave(hoje);
+
+// eventos = { "2026-06-17": [ {id, titulo, inicio, fim, cor, obs} ] }
+let eventos = carregar('prisma-eventos', {});
+
+let eventoEditandoId = null;
+let corSelecionadaModal = '#F06292';
+
+const CORES_PRESET = ['#F06292','#AB47BC','#7B2D8B','#42A5F5','#26A69A','#66BB6A','#FFB300','#EF5350'];
+
+
+// ══════════════════════════════════════
+// RENDERIZAR CALENDÁRIO
+// ══════════════════════════════════════
+function renderCalendario() {
+  document.getElementById('mes-nome').textContent = NOMES_MES[mesAtual];
+  document.getElementById('mes-ano').textContent  = anoAtual;
+
+  const feriadosAno = getFeriados(anoAtual);
+  // Também pega feriados do ano anterior/seguinte para dias "fora do mês" nas bordas
+  const feriadosAnoAnt = getFeriados(anoAtual - 1);
+  const feriadosAnoProx = getFeriados(anoAtual + 1);
+  const todosFeriados = { ...feriadosAnoAnt, ...feriadosAno, ...feriadosAnoProx };
+
+  const primeiroDiaSemana = new Date(anoAtual, mesAtual, 1).getDay();
+  const diasNoMes = new Date(anoAtual, mesAtual + 1, 0).getDate();
+  const diasNoMesAnterior = new Date(anoAtual, mesAtual, 0).getDate();
+
+  const grid = document.getElementById('dias-grid');
+  grid.innerHTML = '';
+
+  const hojeChave = formatarChave(new Date());
+
+  // Dias do mês anterior (preenchimento)
+  for (let i = primeiroDiaSemana - 1; i >= 0; i--) {
+    const diaNum = diasNoMesAnterior - i;
+    const dataObj = new Date(anoAtual, mesAtual - 1, diaNum);
+    criarCelulaDia(dataObj, true, todosFeriados, hojeChave);
+  }
+
+  // Dias do mês atual
+  for (let dia = 1; dia <= diasNoMes; dia++) {
+    const dataObj = new Date(anoAtual, mesAtual, dia);
+    criarCelulaDia(dataObj, false, todosFeriados, hojeChave);
+  }
+
+  // Dias do próximo mês (preenchimento até completar a grade)
+  const totalCelulas = primeiroDiaSemana + diasNoMes;
+  const restante = (7 - (totalCelulas % 7)) % 7;
+  for (let dia = 1; dia <= restante; dia++) {
+    const dataObj = new Date(anoAtual, mesAtual + 1, dia);
+    criarCelulaDia(dataObj, true, todosFeriados, hojeChave);
+  }
+
+  atualizarPainelDia();
+}
+
+function criarCelulaDia(dataObj, foraMes, todosFeriados, hojeChave) {
+  const chave = formatarChave(dataObj);
+  const grid = document.getElementById('dias-grid');
+
+  const cel = document.createElement('div');
+  cel.className = 'dia-cel';
+  if (foraMes) cel.className += ' fora-mes';
+  if (chave === hojeChave) cel.className += ' hoje';
+  if (chave === diaSelecionadoChave) cel.className += ' selecionado';
+
+  const evtsDoDia = eventos[chave] || [];
+  const ehFeriado = !!todosFeriados[chave];
+
+  // Limita a 2 pílulas visíveis, resto agrupa em "+X"
+  const evtsOrdenados = [...evtsDoDia].sort((a, b) => a.inicio.localeCompare(b.inicio));
+  const visiveis = evtsOrdenados.slice(0, 2);
+  const restantes = evtsOrdenados.length - visiveis.length;
+
+  const pilulasHtml = visiveis.map(evt =>
+    `<span class="dia-pilula" style="background:${evt.cor}">${evt.titulo}</span>`
+  ).join('');
+
+  const maisHtml = restantes > 0
+    ? `<span class="dia-pilula-mais">+${restantes}</span>`
+    : '';
+
+  cel.innerHTML = `
+    <span class="dia-numero">${dataObj.getDate()}</span>
+    ${ehFeriado ? '<span class="dia-feriado-dot"></span>' : ''}
+    <div class="dia-pilulas">${pilulasHtml}${maisHtml}</div>
+  `;
+
+  cel.addEventListener('click', () => {
+    if (foraMes) {
+      mesAtual = dataObj.getMonth();
+      anoAtual = dataObj.getFullYear();
+    }
+    diaSelecionadoChave = chave;
+    renderCalendario();
+  });
+
+  grid.appendChild(cel);
+}
+
+function mudarMes(delta) {
+  mesAtual += delta;
+  if (mesAtual < 0) { mesAtual = 11; anoAtual--; }
+  if (mesAtual > 11) { mesAtual = 0; anoAtual++; }
+  renderCalendario();
+}
+
+function irParaHoje() {
+  const agora = new Date();
+  mesAtual = agora.getMonth();
+  anoAtual = agora.getFullYear();
+  diaSelecionadoChave = formatarChave(agora);
+  renderCalendario();
+}
+
+
+// ══════════════════════════════════════
+// PAINEL DO DIA SELECIONADO (feriado + eventos)
+// ══════════════════════════════════════
+function atualizarPainelDia() {
+  const [ano, mes, dia] = diaSelecionadoChave.split('-').map(Number);
+  const dataObj = new Date(ano, mes - 1, dia);
+
+  // Label da data
+  const label = dataObj.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long' });
+  document.getElementById('eventos-data-label').textContent = label;
+
+  // Aviso de feriado
+  const feriadosAno = getFeriados(ano);
+  const nomeFeriado = feriadosAno[diaSelecionadoChave];
+  const avisoEl = document.getElementById('feriado-aviso');
+  if (nomeFeriado) {
+    avisoEl.style.display = 'flex';
+    document.getElementById('feriado-aviso-texto').textContent = nomeFeriado;
+  } else {
+    avisoEl.style.display = 'none';
+  }
+
+  renderEventosDoDia();
+}
+
+function renderEventosDoDia() {
+  const lista = document.getElementById('eventos-lista');
+  const evts = eventos[diaSelecionadoChave] || [];
+
+  if (evts.length === 0) {
+    lista.innerHTML = '<div class="eventos-vazio">Nenhum evento agendado para este dia.</div>';
+    return;
+  }
+
+  // Ordena por horário de início
+  const evtsOrdenados = [...evts].sort((a, b) => a.inicio.localeCompare(b.inicio));
+
+  lista.innerHTML = '';
+  evtsOrdenados.forEach(evt => {
+    const div = document.createElement('div');
+    div.className = 'evento-card';
+    div.style.borderLeftColor = evt.cor;
+    div.innerHTML = `
+      <div class="evento-info">
+        <div class="evento-titulo">${evt.titulo}</div>
+        <div class="evento-horario">⏰ ${evt.inicio} — ${evt.fim}</div>
+        ${evt.obs ? `<div class="evento-obs">${evt.obs}</div>` : ''}
+      </div>
+      <div class="evento-acoes">
+        <button class="evento-acao-btn" onclick="editarEvento('${evt.id}')" title="Editar">✎</button>
+        <button class="evento-acao-btn del" onclick="deletarEvento('${evt.id}')" title="Excluir">🗑</button>
+      </div>
+    `;
+    lista.appendChild(div);
+  });
+}
+
+
+// ══════════════════════════════════════
+// MODAL DE EVENTO
+// ══════════════════════════════════════
+function renderCorPresets() {
+  const wrap = document.getElementById('cor-presets');
+  wrap.innerHTML = '';
+  CORES_PRESET.forEach(cor => {
+    const div = document.createElement('div');
+    div.className = 'cor-preset' + (cor.toLowerCase() === corSelecionadaModal.toLowerCase() ? ' selecionado' : '');
+    div.style.background = cor;
+    div.onclick = () => {
+      corSelecionadaModal = cor;
+      document.getElementById('evt-cor').value = cor;
+      renderCorPresets();
+    };
+    wrap.appendChild(div);
+  });
+}
+
+function selecionarCorCustom() {
+  corSelecionadaModal = document.getElementById('evt-cor').value;
+  renderCorPresets();
+}
+
+function abrirModalEvento() {
+  eventoEditandoId = null;
+  document.getElementById('modal-titulo-texto').textContent = 'Novo evento';
+  document.getElementById('evt-titulo').value = '';
+  document.getElementById('evt-inicio').value = '08:00';
+  document.getElementById('evt-fim').value = '09:00';
+  document.getElementById('evt-obs').value = '';
+  corSelecionadaModal = '#F06292';
+  document.getElementById('evt-cor').value = corSelecionadaModal;
+  renderCorPresets();
+
+  document.getElementById('modal-overlay').classList.add('aberto');
+}
+
+function editarEvento(id) {
+  const evts = eventos[diaSelecionadoChave] || [];
+  const evt = evts.find(e => e.id === id);
+  if (!evt) return;
+
+  eventoEditandoId = id;
+  document.getElementById('modal-titulo-texto').textContent = 'Editar evento';
+  document.getElementById('evt-titulo').value  = evt.titulo;
+  document.getElementById('evt-inicio').value  = evt.inicio;
+  document.getElementById('evt-fim').value     = evt.fim;
+  document.getElementById('evt-obs').value     = evt.obs || '';
+  corSelecionadaModal = evt.cor;
+  document.getElementById('evt-cor').value = corSelecionadaModal;
+  renderCorPresets();
+
+  document.getElementById('modal-overlay').classList.add('aberto');
+}
+
+function fecharModalEvento() {
+  document.getElementById('modal-overlay').classList.remove('aberto');
+}
+
+function salvarEvento() {
+  const titulo = document.getElementById('evt-titulo').value.trim();
+  const inicio = document.getElementById('evt-inicio').value;
+  const fim    = document.getElementById('evt-fim').value;
+  const obs    = document.getElementById('evt-obs').value.trim();
+
+  if (!titulo) { alert('Dê um nome para o evento.'); return; }
+  if (!inicio || !fim) { alert('Informe o horário de início e fim.'); return; }
+
+  if (!eventos[diaSelecionadoChave]) eventos[diaSelecionadoChave] = [];
+
+  if (eventoEditandoId) {
+    // Edita existente
+    const evt = eventos[diaSelecionadoChave].find(e => e.id === eventoEditandoId);
+    evt.titulo = titulo; evt.inicio = inicio; evt.fim = fim; evt.cor = corSelecionadaModal; evt.obs = obs;
+  } else {
+    // Cria novo
+    eventos[diaSelecionadoChave].push({
+      id: Date.now().toString(),
+      titulo, inicio, fim, cor: corSelecionadaModal, obs
+    });
+  }
+
+  salvar('prisma-eventos', eventos);
+  fecharModalEvento();
+  renderCalendario(); // re-renderiza para atualizar a cor da casinha
+}
+
+function deletarEvento(id) {
+  if (!confirm('Excluir este evento?')) return;
+  eventos[diaSelecionadoChave] = (eventos[diaSelecionadoChave] || []).filter(e => e.id !== id);
+  if (eventos[diaSelecionadoChave].length === 0) delete eventos[diaSelecionadoChave];
+  salvar('prisma-eventos', eventos);
+  renderCalendario();
+}
+
+
+// ══════════════════════════════════════
+// INICIALIZAÇÃO
+// ══════════════════════════════════════
+renderCalendario();
+
+</script>
+<script src="js/metas-semanais.js"></script>
+</body>
+</html>

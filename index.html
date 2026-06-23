@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRISMA — Login</title>
+
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="style/login.css" />
+</head>
+
+<body>
+
+  <main class="login-page">
+
+    <div class="login-card">
+
+  
+      <div class="login-logo">
+        <img src="assets/logo.png" alt="Logo PRISMA" />
+        <h1>PRISMA</h1>
+        <p>seu espaço de organização</p>
+      </div>
+
+   
+      <div class="login-divider"></div>
+
+      
+      <form class="login-form" action="#" onsubmit="return false">
+
+        
+        <div class="campo">
+          <label for="email">E-mail</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="seu@email.com"
+            autocomplete="email"
+            required
+          />
+        </div>
+
+        
+        <div class="campo">
+          <label for="senha">Senha</label>
+          <input
+            type="password"
+            id="senha"
+            name="senha"
+            placeholder="••••••••"
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        
+        <p id="erro-login" class="erro-login"></p>
+
+       
+        <button type="submit" class="btn-entrar" onclick="entrar()">
+          Entrar
+        </button>
+
+      </form>
+
+      
+      <p class="login-footer">
+        © 2025 PRISMA · Feito por Gustavo Mazzuco
+      </p>
+
+    </div>
+  </main>
+
+  <script src="js/auth.js"></script>
+  <script>
+    
+    function entrar() {
+      const email = document.getElementById('email').value;
+      const senha = document.getElementById('senha').value;
+      const erroEl = document.getElementById('erro-login');
+
+      erroEl.classList.remove('visivel');
+
+      if (!email || !senha) return;
+
+      const resultado = tentarLogin(email, senha);
+
+      if (resultado.ok) {
+        window.location.href = 'home.html';
+      } else {
+        erroEl.textContent = resultado.motivo;
+        erroEl.classList.add('visivel');
+      }
+    }
+
+    
+    if (estaLogado()) {
+      window.location.href = 'home.html';
+    }
+  </script>
+
+</body>
+</html>

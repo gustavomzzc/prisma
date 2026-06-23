@@ -1,0 +1,603 @@
+
+
+/* ── Layout geral ── */
+.home-page {
+  min-height: 100vh;
+  background-color: var(--bg-page);
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+  position: relative;
+  transition: background-color 0.3s;
+}
+
+/* ── TOPBAR FIXA ── */
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: var(--bg-topbar);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.3s, box-shadow 0.3s, background 0.3s;
+}
+
+.topbar.scrolled {
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-topbar);
+}
+
+/* Hora pequena na topbar — aparece ao scrollar */
+.topbar-hora {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+  opacity: 0;
+  transition: opacity 0.3s, transform 0.3s;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%) translateY(-6px);
+}
+
+.topbar.scrolled .topbar-hora {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.topbar-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+}
+
+/* Grupo de botões à direita da topbar */
+.topbar-acoes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.topbar-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.15rem;
+  padding: 6px;
+  border-radius: var(--borda-sm);
+  transition: background 0.2s;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.topbar-btn:hover {
+  background: var(--rosa-claro);
+}
+
+/* Ícone do modo escuro — troca entre ☀️ e 🌙 via JS */
+.btn-tema .icone-tema {
+  font-size: 1.1rem;
+}
+
+/* ── CONTEÚDO SCROLLÁVEL ── */
+.home-content {
+  padding-top: 60px;
+  padding-bottom: 90px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-lg);
+}
+
+/* ── SEÇÃO DO RELÓGIO ── */
+.secao-relogio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--espaco-xl) var(--espaco-md) var(--espaco-md);
+  gap: 4px;
+}
+
+
+.hora-grande {
+  font-family: var(--fonte-titulo);
+  font-size: 4.5rem;
+  font-weight: 400;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  padding: 0.05em 0.1em;     /* espaço extra para não cortar */
+  display: block;
+  background: var(--gradiente);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.data-hoje {
+  font-size: var(--texto-sm);
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+/* ── CARD PRINCIPAL (quote + metas) ── */
+.card-principal {
+  margin: 0 var(--espaco-md);
+  background: var(--bg-card);
+  border-radius: var(--borda-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: background 0.3s, box-shadow 0.3s;
+}
+
+/* Área da quote */
+.quote-area {
+  padding: var(--espaco-lg);
+  background: linear-gradient(135deg, rgba(240,98,146,0.06) 0%, rgba(171,71,188,0.06) 100%);
+  border-bottom: 1px solid var(--border-color);
+  position: relative;
+  min-height: 90px;
+  display: flex;
+  align-items: center;
+}
+
+html.dark .quote-area {
+  background: linear-gradient(135deg, rgba(240,98,146,0.08) 0%, rgba(171,71,188,0.08) 100%);
+}
+
+.quote-aspas {
+  font-family: var(--fonte-titulo);
+  font-size: 3rem;
+  line-height: 0;
+  color: var(--rosa-medio);
+  opacity: 0.3;
+  position: absolute;
+  top: 18px;
+  left: 16px;
+  user-select: none;
+}
+
+.quote-texto {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-md);
+  font-style: italic;
+  color: var(--text-primary);
+  line-height: 1.5;
+  padding: 0 var(--espaco-sm) 0 var(--espaco-lg);
+  transition: opacity 0.5s, transform 0.5s, color 0.3s;
+}
+
+.quote-texto.saindo {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+/* ── METAS DIÁRIAS ── */
+.metas-area {
+  padding: var(--espaco-md) var(--espaco-lg);
+}
+
+.metas-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--espaco-md);
+}
+
+.metas-titulo {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.metas-progresso-label {
+  font-size: var(--texto-xs);
+  color: var(--roxo-medio);
+  font-weight: 500;
+}
+
+.barra-progresso-geral {
+  height: 4px;
+  background: var(--border-color);
+  border-radius: var(--borda-pill);
+  margin-bottom: var(--espaco-md);
+  overflow: hidden;
+}
+
+.barra-progresso-fill {
+  height: 100%;
+  background: var(--gradiente);
+  border-radius: var(--borda-pill);
+  transition: width 0.5s ease;
+}
+
+.metas-lista {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+
+.meta-item:last-child {
+  border-bottom: none;
+}
+
+.meta-checkbox {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid var(--rosa-medio);
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+  position: relative;
+}
+
+.meta-item.concluida .meta-checkbox {
+  background: var(--gradiente);
+  border-color: transparent;
+}
+
+.meta-checkbox::after {
+  content: '';
+  width: 5px;
+  height: 8px;
+  border: 2px solid white;
+  border-top: none;
+  border-left: none;
+  transform: rotate(45deg) translateY(-1px);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.meta-item.concluida .meta-checkbox::after {
+  opacity: 1;
+}
+
+.meta-texto {
+  font-size: var(--texto-sm);
+  color: var(--text-primary);
+  transition: color 0.2s;
+  line-height: 1.3;
+}
+
+.meta-item.concluida .meta-texto {
+  color: var(--text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--rosa-medio);
+}
+
+.btn-add-meta {
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-xs);
+  background: none;
+  border: 1.5px dashed var(--border-color);
+  border-radius: var(--borda-sm);
+  color: var(--text-muted);
+  font-family: var(--fonte-corpo);
+  font-size: var(--texto-sm);
+  padding: 0.5rem var(--espaco-sm);
+  width: 100%;
+  cursor: pointer;
+  margin-top: var(--espaco-sm);
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.btn-add-meta:hover {
+  border-color: var(--rosa-medio);
+  color: var(--rosa);
+}
+
+/* ── CARD: O QUE ESTUDAR HOJE ── */
+.card-estudar-hoje {
+  margin: 0 var(--espaco-md);
+  background: var(--bg-card);
+  border-radius: var(--borda-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: background 0.3s;
+}
+
+.estudar-hoje-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: var(--espaco-md) var(--espaco-lg) 0.6rem;
+}
+.estudar-hoje-icone { font-size: 1.05rem; }
+.estudar-hoje-titulo {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.estudar-hoje-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 var(--espaco-lg) var(--espaco-md);
+}
+
+.estudar-hoje-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--rosa-claro);
+  border-radius: var(--borda-sm);
+  padding: 0.55rem 0.8rem;
+}
+html.dark .estudar-hoje-item { background: rgba(240,98,146,0.12); }
+
+.estudar-hoje-materia {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.estudar-hoje-tempo {
+  font-size: var(--texto-xs);
+  color: var(--roxo-medio);
+  background: var(--bg-card);
+  padding: 2px 9px;
+  border-radius: var(--borda-pill);
+  font-weight: 600;
+}
+
+.estudar-hoje-vazio {
+  padding: 0 var(--espaco-lg) var(--espaco-md);
+  font-size: var(--texto-sm);
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ── NAVBAR INFERIOR ── */
+.navbar {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  background: var(--bg-navbar);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  padding: 0.6rem 0 calc(0.6rem + env(safe-area-inset-bottom));
+  z-index: 100;
+  transition: background 0.3s, border-color 0.3s;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px 16px;
+  border-radius: var(--borda-sm);
+  transition: background 0.15s;
+  text-decoration: none;
+}
+
+.nav-item:hover {
+  background: var(--rosa-claro);
+}
+
+.nav-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.nav-label {
+  font-family: var(--fonte-corpo);
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.nav-item.ativo .nav-icon {
+  filter: drop-shadow(0 0 4px rgba(240, 98, 146, 0.4));
+}
+
+.nav-item.ativo .nav-label {
+  background: var(--gradiente);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 600;
+}
+
+/* ── INPUT nova meta ── */
+.input-nova-meta {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid var(--rosa-medio);
+  border-radius: var(--borda-sm);
+  font-family: var(--fonte-corpo);
+  font-size: var(--texto-sm);
+  color: var(--text-primary);
+  background: var(--input-bg);
+  outline: none;
+  margin-top: var(--espaco-sm);
+  display: none;
+  transition: background 0.3s, color 0.3s;
+}
+
+.input-nova-meta.visivel {
+  display: block;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ════════════════════════════════════
+   LINKS DE NAVEGAÇÃO NA TOPBAR (desktop)
+   Escondidos no mobile por padrão.
+════════════════════════════════════ */
+.topbar-nav-desktop {
+  display: none; /* só aparece no desktop, ver media query abaixo */
+}
+.topbar-nav-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-family: var(--fonte-corpo);
+  font-size: var(--texto-sm);
+  font-weight: 500;
+  color: var(--text-muted);
+  padding: 0.5rem 1rem;
+  border-radius: var(--borda-pill);
+  transition: background 0.15s, color 0.15s;
+  white-space: nowrap;
+}
+.topbar-nav-link:hover {
+  background: var(--rosa-claro);
+  color: var(--text-primary);
+}
+.topbar-nav-link.ativo {
+  background: var(--gradiente);
+  color: #fff;
+}
+
+/* Agrupador dos cards de conteúdo */
+.home-cards-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-lg);
+}
+
+/* ════════════════════════════════════
+   RESPONSIVO — MOBILE (padrão, até 767px)
+════════════════════════════════════ */
+@media (min-width: 480px) and (max-width: 767px) {
+  .home-page {
+    box-shadow: 0 0 60px rgba(123, 45, 139, 0.08);
+    min-height: 100vh;
+  }
+}
+
+/* ════════════════════════════════════
+   RESPONSIVO — DESKTOP (768px ou mais)
+   Layout em tela cheia, navegação no topo,
+   sem navbar inferior, cards lado a lado.
+════════════════════════════════════ */
+@media (min-width: 768px) {
+
+  .home-page {
+    max-width: 100%;
+    box-shadow: none;
+  }
+
+  /* Topbar ocupa a tela inteira, com mais respiro */
+  .topbar {
+    max-width: 100%;
+    padding: 1rem 2.5rem;
+  }
+
+  /* Logo maior no desktop */
+  .topbar-logo {
+    width: 42px;
+    height: 42px;
+  }
+
+  /* Mostra os links de navegação na topbar, centralizados */
+  .topbar-nav-desktop {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  /* A hora pequena que aparecia ao scrollar não é mais necessária no
+     desktop, pois o relógio grande já fica sempre visível na tela */
+  .topbar-hora {
+    display: none;
+  }
+
+  .topbar-acoes {
+    gap: 8px;
+  }
+  .topbar-btn {
+    font-size: 1.3rem;
+  }
+
+  /* Conteúdo centralizado com largura máxima de leitura confortável */
+  .home-content {
+    padding-top: 90px;
+    padding-bottom: 50px;
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+  }
+
+  /* Relógio grande ainda maior no desktop */
+  .hora-grande {
+    font-size: 6rem;
+  }
+
+  /* Cards lado a lado */
+  .home-cards-grid {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .home-cards-grid > section {
+    flex: 1;
+    margin: 0; /* remove a margem lateral mobile, o grid já cuida do espaçamento */
+  }
+
+  /* Esconde a navbar inferior — navegação já está no topo */
+  .navbar {
+    display: none;
+  }
+
+  /* Sem navbar inferior, não precisa do espaço reservado pra ela */
+  .home-content {
+    padding-bottom: 60px;
+  }
+}
+
+/* Telas bem largas: aumenta um pouco mais o limite de leitura */
+@media (min-width: 1200px) {
+  .home-content {
+    max-width: 1100px;
+  }
+}

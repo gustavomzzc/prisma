@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRISMA — Configurações</title>
+
+  <script>
+    if (localStorage.getItem('prisma-tema') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="style/configuracoes.css" />
+</head>
+<body>
+
+<div class="config-page">
+
+  <!-- ══ TOPBAR ══ -->
+  <header class="topbar" id="topbar">
+    <button class="topbar-btn-voltar" onclick="window.location.href='home.html'" title="Voltar">←</button>
+
+    <img src="assets/logo.png" alt="PRISMA" class="topbar-logo-desktop" id="logo-abre-sidebar" />
+
+    <nav class="topbar-nav-desktop">
+      <button class="topbar-nav-link" onclick="window.location.href='financeiro.html'">💰 Finanças</button>
+      <button class="topbar-nav-link" onclick="window.location.href='home.html'">🏠 Home</button>
+      <button class="topbar-nav-link" onclick="window.location.href='estudos.html'">📚 Estudos</button>
+      <button class="topbar-nav-link" onclick="window.location.href='projetos.html'">🎯 Projetos</button>
+    </nav>
+
+    <span class="topbar-titulo">Configurações</span>
+    <div class="topbar-acoes">
+      <button class="topbar-btn btn-tema" id="btn-tema" title="Alternar tema">
+        <span class="icone-tema">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ══ CONTEÚDO ══ -->
+  <main class="config-content">
+
+    <!-- ── SEÇÃO: PERFIL ── -->
+    <section class="config-secao">
+      <span class="config-secao-titulo">👤 Perfil</span>
+      <div class="config-card">
+        <div class="config-linha-vertical">
+          <div class="config-linha-info">
+            <span class="config-linha-label">Nome de exibição</span>
+            <span class="config-linha-desc">Aparece na saudação da Home e no menu lateral.</span>
+          </div>
+          <input type="text" id="input-nome-usuario" class="config-input" placeholder="Como você quer ser chamada?" maxlength="30" />
+          <div style="display:flex; align-items:center; gap:10px;">
+            <button class="btn-salvar-config" onclick="salvarNomeUsuario()">Salvar nome</button>
+            <span class="config-feedback" id="feedback-nome">Salvo!</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SEÇÃO: PREFERÊNCIAS ── -->
+    <section class="config-secao">
+      <span class="config-secao-titulo">⏱️ Preferências</span>
+      <div class="config-card">
+        <div class="config-linha">
+          <div class="config-linha-info">
+            <span class="config-linha-label">Som do Pomodoro</span>
+            <span class="config-linha-desc">Toca um alarme ao terminar o foco ou descanso.</span>
+          </div>
+          <label class="config-toggle">
+            <input type="checkbox" id="toggle-som-pomodoro" />
+            <span class="config-toggle-track"></span>
+          </label>
+        </div>
+
+        <div class="config-linha">
+          <div class="config-linha-info">
+            <span class="config-linha-label">Modo escuro</span>
+            <span class="config-linha-desc">Também pode ser alternado pelo ícone no topo.</span>
+          </div>
+          <label class="config-toggle">
+            <input type="checkbox" id="toggle-modo-escuro" />
+            <span class="config-toggle-track"></span>
+          </label>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SEÇÃO: DADOS ── -->
+    <section class="config-secao">
+      <span class="config-secao-titulo">🗑️ Dados</span>
+      <div class="config-card">
+        <div class="config-linha-perigo">
+          <button class="btn-perigo" onclick="limparTodosOsDados()">Limpar todos os dados do PRISMA</button>
+          <p class="config-aviso-perigo">
+            Isso apaga permanentemente metas, registros financeiros, matérias, eventos do calendário e projetos salvos neste navegador. Essa ação não pode ser desfeita.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <p class="config-rodape">PRISMA 💎 · feito com 💜</p>
+
+  </main>
+
+  <!-- ══ NAVBAR ══ -->
+  <nav class="navbar">
+    <button class="nav-item" onclick="window.location.href='financeiro.html'">
+      <span class="nav-icon">💰</span>
+      <span class="nav-label">Finanças</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='home.html'">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='estudos.html'">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">Estudos</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='projetos.html'">
+      <span class="nav-icon">🎯</span>
+      <span class="nav-label">Projetos</span>
+    </button>
+  </nav>
+
+</div>
+
+
+<!-- ══ SIDEBAR (menu lateral) ══ -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-header">
+    <img src="assets/logo.png" alt="PRISMA" />
+    <span>PRISMA</span>
+    <button class="sidebar-fechar" onclick="fecharSidebar()">✕</button>
+  </div>
+
+  <nav class="sidebar-menu">
+    <button class="sidebar-item" onclick="window.location.href='calendario.html'">
+      <span class="sidebar-item-icone">📅</span> Calendário
+    </button>
+    <button class="sidebar-item" onclick="window.location.href='configuracoes.html'">
+      <span class="sidebar-item-icone">⚙️</span> Configurações
+    </button>
+    <button class="sidebar-item" onclick="sidebarSobre()">
+      <span class="sidebar-item-icone">ℹ️</span> Sobre o app
+    </button>
+
+    <div class="sidebar-divisor"></div>
+
+    <button class="sidebar-item sair" onclick="sidebarSair()">
+      <span class="sidebar-item-icone">🚪</span> Sair
+    </button>
+  </nav>
+
+</aside>
+
+
+<script src="js/auth.js"></script>
+<script>protegerPagina();</script>
+<script src="js/tema.js"></script>
+<script src="js/sidebar.js"></script>
+<script src="js/configuracoes.js"></script>
+<script>
+  // Efeito de scroll na topbar
+  const topbar = document.getElementById('topbar');
+  window.addEventListener('scroll', () => {
+    topbar.classList.toggle('scrolled', window.scrollY > 30);
+  });
+</script>
+
+</body>
+</html>

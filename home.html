@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRISMA — Home</title>
+  <script>
+    if (localStorage.getItem('prisma-tema') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="style/home.css" />
+</head>
+
+<body>
+
+  <div class="home-page">
+
+  
+    <header class="topbar" id="topbar">
+      <img src="assets/logo.png" alt="PRISMA" class="topbar-logo" id="logo-abre-sidebar" />
+
+     
+      <nav class="topbar-nav-desktop">
+        <button class="topbar-nav-link" onclick="window.location.href='financeiro.html'">💰 Finanças</button>
+        <button class="topbar-nav-link ativo" onclick="window.location.href='home.html'">🏠 Home</button>
+        <button class="topbar-nav-link" onclick="window.location.href='estudos.html'">📚 Estudos</button>
+        <button class="topbar-nav-link" onclick="window.location.href='projetos.html'">🎯 Projetos</button>
+      </nav>
+
+      <span class="topbar-hora" id="topbar-hora">00:00</span>
+
+      
+      <div class="topbar-acoes">
+        <button class="topbar-btn btn-tema" id="btn-tema" title="Alternar modo escuro">
+          <span class="icone-tema">🌙</span>
+        </button>
+        <button class="topbar-btn" title="Abrir calendário" onclick="window.location.href='calendario.html'">
+          📅
+        </button>
+      </div>
+    </header>
+
+
+   
+    <main class="home-content">
+
+      
+      <section class="secao-relogio">
+        <div class="hora-grande" id="hora-grande">00:00</div>
+        <div class="data-hoje" id="data-hoje">carregando...</div>
+      </section>
+
+
+     
+      <div class="home-cards-grid">
+
+        
+        <section class="card-principal">
+
+          <div class="quote-area">
+            <span class="quote-aspas">"</span>
+            <p class="quote-texto" id="quote-texto">Carregando inspiração...</p>
+          </div>
+
+
+          <div class="metas-area">
+            <div class="metas-cabecalho">
+              <span class="metas-titulo">Metas do dia</span>
+              <span class="metas-progresso-label" id="progresso-label">0 / 0</span>
+            </div>
+
+            <div class="barra-progresso-geral">
+              <div class="barra-progresso-fill" id="barra-fill" style="width: 0%"></div>
+            </div>
+
+            <ul class="metas-lista" id="metas-lista"></ul>
+
+            <input
+              type="text"
+              class="input-nova-meta"
+              id="input-nova-meta"
+              placeholder="Escreva a meta e pressione Enter..."
+              maxlength="80"
+            />
+
+            <button class="btn-add-meta" id="btn-add-meta">
+              ＋ &nbsp; Adicionar meta
+            </button>
+          </div>
+        </section>
+
+
+       
+        <section class="card-estudar-hoje">
+          <div class="estudar-hoje-header">
+            <span class="estudar-hoje-icone">📚</span>
+            <span class="estudar-hoje-titulo">Estudar hoje</span>
+          </div>
+          <div class="estudar-hoje-lista" id="estudar-hoje-lista">
+           
+          </div>
+        </section>
+
+      </div>
+
+    </main>
+
+
+   
+    <nav class="navbar">
+      <button class="nav-item" onclick="window.location.href='financeiro.html'">
+        <span class="nav-icon">💰</span>
+        <span class="nav-label">Finanças</span>
+      </button>
+
+      <button class="nav-item ativo">
+        <span class="nav-icon">🏠</span>
+        <span class="nav-label">Home</span>
+      </button>
+
+      <button class="nav-item" onclick="window.location.href='estudos.html'">
+        <span class="nav-icon">📚</span>
+        <span class="nav-label">Estudos</span>
+      </button>
+
+      <button class="nav-item" onclick="window.location.href='projetos.html'">
+        <span class="nav-icon">🎯</span>
+        <span class="nav-label">Projetos</span>
+      </button>
+    </nav>
+
+  </div>
+
+
+
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+  <aside class="sidebar" id="sidebar">
+
+    <div class="sidebar-header">
+      <img src="assets/logo.png" alt="PRISMA" />
+      <span>PRISMA</span>
+      <button class="sidebar-fechar" onclick="fecharSidebar()">✕</button>
+    </div>
+
+    <nav class="sidebar-menu">
+      <button class="sidebar-item" onclick="window.location.href='calendario.html'">
+        <span class="sidebar-item-icone">📅</span> Calendário
+      </button>
+      <button class="sidebar-item" onclick="window.location.href='configuracoes.html'">
+        <span class="sidebar-item-icone">⚙️</span> Configurações
+      </button>
+      <button class="sidebar-item" onclick="sidebarSobre()">
+        <span class="sidebar-item-icone">ℹ️</span> Sobre o app
+      </button>
+
+      <div class="sidebar-divisor"></div>
+
+      <button class="sidebar-item sair" onclick="sidebarSair()">
+        <span class="sidebar-item-icone">🚪</span> Sair
+      </button>
+    </nav>
+
+  </aside>
+
+
+  <script src="js/auth.js"></script>
+  <script>protegerPagina();</script>
+  <script src="js/tema.js"></script>
+  <script src="js/sidebar.js"></script>
+  <script src="js/relogio.js"></script>
+  <script src="data/quotes.js"></script>
+  <script src="js/metas.js"></script>
+  <script src="js/estudar-hoje.js"></script>
+  <script src="js/home.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PRISMA — Financeiro</title>
+
+  <script>
+    if (localStorage.getItem('prisma-tema') === 'dark') {
+      document.documentElement.classList.add('dark');
+    }
+  </script>
+
+  <link rel="stylesheet" href="style/main.css" />
+  <link rel="stylesheet" href="style/financeiro.css" />
+</head>
+<body>
+
+<div class="fin-page">
+
+  <!-- ══ TOPBAR ══ -->
+  <header class="topbar" id="topbar">
+    <img src="assets/logo.png" alt="PRISMA" class="topbar-logo" id="logo-abre-sidebar" />
+
+    <nav class="topbar-nav-desktop">
+      <button class="topbar-nav-link ativo" onclick="window.location.href='financeiro.html'">💰 Finanças</button>
+      <button class="topbar-nav-link" onclick="window.location.href='home.html'">🏠 Home</button>
+      <button class="topbar-nav-link" onclick="window.location.href='estudos.html'">📚 Estudos</button>
+      <button class="topbar-nav-link" onclick="window.location.href='projetos.html'">🎯 Projetos</button>
+    </nav>
+
+    <span class="topbar-titulo">Financeiro</span>
+    <div class="topbar-acoes">
+      <button class="topbar-btn" title="Abrir calendário" onclick="window.location.href='calendario.html'">📅</button>
+      <button class="topbar-btn btn-tema" id="btn-tema" title="Alternar tema">
+        <span class="icone-tema">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ══ CONTEÚDO ══ -->
+  <main class="fin-content">
+
+    <!-- SALDO TOTAL -->
+    <div class="saldo-hero">
+      <span class="saldo-label">Saldo total</span>
+      <span class="saldo-valor" id="saldo-total">R$ 0,00</span>
+      <div class="saldo-resumo">
+        <div class="saldo-resumo-item">
+          <span class="saldo-resumo-label">Entradas</span>
+          <span class="saldo-resumo-valor entrada" id="total-entradas">R$ 0,00</span>
+        </div>
+        <div class="saldo-resumo-item">
+          <span class="saldo-resumo-label">Saídas</span>
+          <span class="saldo-resumo-valor saida" id="total-saidas">R$ 0,00</span>
+        </div>
+        <div class="saldo-resumo-item">
+          <span class="saldo-resumo-label">Investido</span>
+          <span class="saldo-resumo-valor" id="total-investido-mini" style="color:rgba(255,255,255,0.9)">R$ 0,00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ABAS INTERNAS -->
+    <div class="abas-container">
+
+      <div class="abas-nav">
+        <button class="aba-btn ativa" data-aba="registros">📋 Registros</button>
+        <button class="aba-btn" data-aba="investimentos">📈 Investimentos</button>
+        <button class="aba-btn" data-aba="aprender">🎓 Aprender</button>
+      </div>
+
+      <!-- ════ ABA: REGISTROS ════ -->
+      <div class="aba-painel ativa" id="painel-registros">
+
+        <!-- Formulário novo registro -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-titulo">Novo registro</span>
+          </div>
+          <div class="card-body">
+            <div class="form-registro">
+
+              <!-- Toggle entrada/saída -->
+              <div class="toggle-tipo">
+                <button id="btn-entrada" class="ativo-entrada" onclick="setTipo('entrada')">▲ Entrada</button>
+                <button id="btn-saida"   onclick="setTipo('saida')">▼ Saída</button>
+              </div>
+
+              <!-- Valor e data -->
+              <div class="campos-row">
+                <div class="campo-fin">
+                  <label>Valor (R$)</label>
+                  <input type="number" id="reg-valor" placeholder="0,00" min="0" step="0.01" />
+                </div>
+                <div class="campo-fin">
+                  <label>Data</label>
+                  <input type="date" id="reg-data" />
+                </div>
+              </div>
+
+              <!-- Descrição -->
+              <div class="campo-fin">
+                <label>Descrição</label>
+                <input type="text" id="reg-descricao" placeholder="Ex: Compra no mercado..." maxlength="60" />
+              </div>
+
+              <!-- Categoria -->
+              <div class="campo-fin">
+                <label>Categoria</label>
+                <div class="categorias-wrap" id="categorias-wrap">
+                  <!-- Tags geradas pelo JS -->
+                </div>
+              </div>
+
+              <button class="btn-salvar" onclick="salvarRegistro()">Salvar registro</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de registros -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-titulo">Histórico</span>
+            <span id="registros-count" style="font-size:var(--texto-xs);color:var(--text-muted)">0 registros</span>
+          </div>
+          <ul class="registros-lista" id="registros-lista">
+            <li class="lista-vazia">Nenhum registro ainda 💸</li>
+          </ul>
+        </div>
+
+      </div><!-- fim painel registros -->
+
+
+      <!-- ════ ABA: INVESTIMENTOS ════ -->
+      <div class="aba-painel" id="painel-investimentos">
+
+        <!-- Card saldo investido -->
+        <div class="inv-saldo-card">
+          <span class="inv-saldo-label">Total investido</span>
+          <span class="inv-saldo-valor" id="inv-total">R$ 0,00</span>
+        </div>
+
+        <!-- Formulário novo investimento -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-titulo">Registrar investimento</span>
+          </div>
+          <div class="card-body">
+            <div class="form-registro">
+              <div class="campos-row">
+                <div class="campo-fin">
+                  <label>Valor (R$)</label>
+                  <input type="number" id="inv-valor" placeholder="0,00" min="0" step="0.01" />
+                </div>
+                <div class="campo-fin">
+                  <label>Data</label>
+                  <input type="date" id="inv-data" />
+                </div>
+              </div>
+              <div class="campo-fin">
+                <label>Tipo / Descrição</label>
+                <input type="text" id="inv-descricao" placeholder="Ex: Tesouro Direto, CDB..." maxlength="60" />
+              </div>
+              <button class="btn-salvar" onclick="salvarInvestimento()">Registrar</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lista de investimentos -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-titulo">Histórico de aportes</span>
+          </div>
+          <ul class="registros-lista" id="inv-lista">
+            <li class="lista-vazia">Nenhum investimento registrado 📈</li>
+          </ul>
+        </div>
+
+      </div><!-- fim painel investimentos -->
+
+
+      <!-- ════ ABA: APRENDER ════ -->
+      <div class="aba-painel" id="painel-aprender">
+        <div class="videos-grid" id="videos-grid">
+          <!-- Cards gerados pelo JS -->
+        </div>
+      </div>
+
+    </div><!-- fim abas-container -->
+  </main>
+
+  <!-- ══ NAVBAR ══ -->
+  <nav class="navbar">
+    <button class="nav-item ativo">
+      <span class="nav-icon">💰</span>
+      <span class="nav-label">Finanças</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='home.html'">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Home</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='estudos.html'">
+      <span class="nav-icon">📚</span>
+      <span class="nav-label">Estudos</span>
+    </button>
+    <button class="nav-item" onclick="window.location.href='projetos.html'">
+      <span class="nav-icon">🎯</span>
+      <span class="nav-label">Projetos</span>
+    </button>
+  </nav>
+
+</div><!-- fim fin-page -->
+
+
+<!-- ══ SIDEBAR (menu lateral) ══ -->
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-header">
+    <img src="assets/logo.png" alt="PRISMA" />
+    <span>PRISMA</span>
+    <button class="sidebar-fechar" onclick="fecharSidebar()">✕</button>
+  </div>
+
+  <nav class="sidebar-menu">
+    <button class="sidebar-item" onclick="window.location.href='calendario.html'">
+      <span class="sidebar-item-icone">📅</span> Calendário
+    </button>
+    <button class="sidebar-item" onclick="window.location.href='configuracoes.html'">
+      <span class="sidebar-item-icone">⚙️</span> Configurações
+    </button>
+    <button class="sidebar-item" onclick="sidebarSobre()">
+      <span class="sidebar-item-icone">ℹ️</span> Sobre o app
+    </button>
+
+    <div class="sidebar-divisor"></div>
+
+    <button class="sidebar-item sair" onclick="sidebarSair()">
+      <span class="sidebar-item-icone">🚪</span> Sair
+    </button>
+  </nav>
+
+</aside>
+
+
+<script src="js/auth.js"></script>
+<script>protegerPagina();</script>
+<script src="js/sidebar.js"></script>
+<script>
+
+// ══════════════════════════════════════
+// MODO ESCURO
+// ══════════════════════════════════════
+const btnTema = document.getElementById('btn-tema');
+const icone   = btnTema.querySelector('.icone-tema');
+const htmlEl  = document.documentElement;
+
+function aplicarTema(escuro) {
+  escuro ? htmlEl.classList.add('dark') : htmlEl.classList.remove('dark');
+  icone.textContent = escuro ? '☀️' : '🌙';
+  localStorage.setItem('prisma-tema', escuro ? 'dark' : 'light');
+}
+aplicarTema(localStorage.getItem('prisma-tema') === 'dark');
+btnTema.addEventListener('click', () => aplicarTema(!htmlEl.classList.contains('dark')));
+
+
+// ══════════════════════════════════════
+// SCROLL TOPBAR
+// ══════════════════════════════════════
+window.addEventListener('scroll', () => {
+  document.getElementById('topbar').classList.toggle('scrolled', window.scrollY > 40);
+});
+
+
+// ══════════════════════════════════════
+// ABAS
+// ══════════════════════════════════════
+document.querySelectorAll('.aba-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.aba-btn').forEach(b => b.classList.remove('ativa'));
+    document.querySelectorAll('.aba-painel').forEach(p => p.classList.remove('ativa'));
+    btn.classList.add('ativa');
+    document.getElementById('painel-' + btn.dataset.aba).classList.add('ativa');
+  });
+});
+
+
+// ══════════════════════════════════════
+// DADOS (isolados por conta — ver js/auth.js)
+// ══════════════════════════════════════
+function carregar(chave, padrao) {
+  try { return JSON.parse(prismaGet(chave)) || padrao; }
+  catch { return padrao; }
+}
+function salvar(chave, valor) {
+  prismaSet(chave, JSON.stringify(valor));
+}
+
+let registros    = carregar('prisma-registros', []);
+let investimentos= carregar('prisma-investimentos', []);
+let categorias   = carregar('prisma-categorias', ['Mercado','Farmácia','Transporte','Alimentação','Lazer','Saúde','Educação']);
+let tipoAtivo    = 'entrada';
+let catSelecionada = '';
+
+
+// ══════════════════════════════════════
+// FORMATO MOEDA
+// ══════════════════════════════════════
+function fmtMoeda(val) {
+  return 'R$ ' + Math.abs(val).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+
+// ══════════════════════════════════════
+// SALDO
+// ══════════════════════════════════════
+function atualizarSaldo() {
+  let entradas = 0, saidas = 0;
+  registros.forEach(r => {
+    if (r.tipo === 'entrada') entradas += r.valor;
+    else saidas += r.valor;
+  });
+  const investido = investimentos.reduce((a, i) => a + i.valor, 0);
+  const saldo = entradas - saidas;
+
+  document.getElementById('saldo-total').textContent       = fmtMoeda(saldo);
+  document.getElementById('total-entradas').textContent    = fmtMoeda(entradas);
+  document.getElementById('total-saidas').textContent      = fmtMoeda(saidas);
+  document.getElementById('total-investido-mini').textContent = fmtMoeda(investido);
+  document.getElementById('inv-total').textContent         = fmtMoeda(investido);
+}
+
+
+// ══════════════════════════════════════
+// TOGGLE ENTRADA / SAÍDA
+// ══════════════════════════════════════
+function setTipo(tipo) {
+  tipoAtivo = tipo;
+  const bE = document.getElementById('btn-entrada');
+  const bS = document.getElementById('btn-saida');
+  bE.className = tipo === 'entrada' ? 'ativo-entrada' : '';
+  bS.className = tipo === 'saida'   ? 'ativo-saida'   : '';
+}
+
+
+// ══════════════════════════════════════
+// CATEGORIAS
+// ══════════════════════════════════════
+function renderCategorias() {
+  const wrap = document.getElementById('categorias-wrap');
+  wrap.innerHTML = '';
+
+  categorias.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'tag-categoria' + (cat === catSelecionada ? ' selecionada' : '');
+    btn.textContent = cat;
+    btn.onclick = () => { catSelecionada = cat === catSelecionada ? '' : cat; renderCategorias(); };
+    wrap.appendChild(btn);
+  });
+
+  // Botão "Nova categoria"
+  const add = document.createElement('button');
+  add.className = 'tag-categoria add-cat';
+  add.textContent = '＋ Nova';
+  add.onclick = () => {
+    const nova = prompt('Nome da nova categoria:');
+    if (nova && nova.trim() && !categorias.includes(nova.trim())) {
+      categorias.push(nova.trim());
+      salvar('prisma-categorias', categorias);
+      catSelecionada = nova.trim();
+      renderCategorias();
+    }
+  };
+  wrap.appendChild(add);
+}
+
+
+// ══════════════════════════════════════
+// SALVAR REGISTRO
+// ══════════════════════════════════════
+function salvarRegistro() {
+  const valor = parseFloat(document.getElementById('reg-valor').value);
+  const data  = document.getElementById('reg-data').value;
+  const desc  = document.getElementById('reg-descricao').value.trim();
+
+  if (!valor || valor <= 0) { alert('Informe um valor válido.'); return; }
+  if (!desc)                 { alert('Informe uma descrição.');  return; }
+
+  registros.unshift({
+    id: Date.now(),
+    tipo: tipoAtivo,
+    valor,
+    data: data || new Date().toISOString().split('T')[0],
+    descricao: desc,
+    categoria: catSelecionada || 'Geral'
+  });
+  salvar('prisma-registros', registros);
+
+  // Limpa form
+  document.getElementById('reg-valor').value = '';
+  document.getElementById('reg-descricao').value = '';
+  catSelecionada = '';
+  renderCategorias();
+  renderRegistros();
+  atualizarSaldo();
+}
+
+
+// ══════════════════════════════════════
+// RENDERIZAR REGISTROS
+// ══════════════════════════════════════
+function renderRegistros() {
+  const lista = document.getElementById('registros-lista');
+  const count = document.getElementById('registros-count');
+
+  if (registros.length === 0) {
+    lista.innerHTML = '<li class="lista-vazia">Nenhum registro ainda 💸</li>';
+    count.textContent = '0 registros';
+    return;
+  }
+
+  count.textContent = registros.length + ' registro' + (registros.length > 1 ? 's' : '');
+  lista.innerHTML = '';
+
+  registros.forEach(r => {
+    const li = document.createElement('li');
+    li.className = 'registro-item';
+
+    const dataFmt = r.data
+      ? new Date(r.data + 'T00:00:00').toLocaleDateString('pt-BR', { day:'2-digit', month:'short' })
+      : '';
+
+    li.innerHTML = `
+      <div class="registro-dot ${r.tipo}"></div>
+      <div class="registro-info">
+        <div class="registro-desc">${r.descricao}</div>
+        <div class="registro-cat">${r.categoria} · ${dataFmt}</div>
+      </div>
+      <span class="registro-valor ${r.tipo}">${r.tipo === 'entrada' ? '+' : '-'} ${fmtMoeda(r.valor)}</span>
+      <button class="registro-del" onclick="deletarRegistro(${r.id})" title="Remover">✕</button>
+    `;
+    lista.appendChild(li);
+  });
+}
+
+function deletarRegistro(id) {
+  if (!confirm('Remover este registro?')) return;
+  registros = registros.filter(r => r.id !== id);
+  salvar('prisma-registros', registros);
+  renderRegistros();
+  atualizarSaldo();
+}
+
+
+// ══════════════════════════════════════
+// INVESTIMENTOS
+// ══════════════════════════════════════
+function salvarInvestimento() {
+  const valor = parseFloat(document.getElementById('inv-valor').value);
+  const data  = document.getElementById('inv-data').value;
+  const desc  = document.getElementById('inv-descricao').value.trim();
+
+  if (!valor || valor <= 0) { alert('Informe um valor válido.'); return; }
+  if (!desc)                 { alert('Informe o tipo/descrição.'); return; }
+
+  investimentos.unshift({
+    id: Date.now(),
+    valor,
+    data: data || new Date().toISOString().split('T')[0],
+    descricao: desc
+  });
+  salvar('prisma-investimentos', investimentos);
+
+  document.getElementById('inv-valor').value = '';
+  document.getElementById('inv-descricao').value = '';
+  renderInvestimentos();
+  atualizarSaldo();
+}
+
+function renderInvestimentos() {
+  const lista = document.getElementById('inv-lista');
+  if (investimentos.length === 0) {
+    lista.innerHTML = '<li class="lista-vazia">Nenhum investimento registrado 📈</li>';
+    return;
+  }
+  lista.innerHTML = '';
+  investimentos.forEach(inv => {
+    const li = document.createElement('li');
+    li.className = 'registro-item';
+    const dataFmt = inv.data
+      ? new Date(inv.data + 'T00:00:00').toLocaleDateString('pt-BR', { day:'2-digit', month:'short' })
+      : '';
+    li.innerHTML = `
+      <div class="registro-dot entrada"></div>
+      <div class="registro-info">
+        <div class="registro-desc">${inv.descricao}</div>
+        <div class="registro-cat">${dataFmt}</div>
+      </div>
+      <span class="registro-valor entrada">+ ${fmtMoeda(inv.valor)}</span>
+      <button class="registro-del" onclick="deletarInvestimento(${inv.id})" title="Remover">✕</button>
+    `;
+    lista.appendChild(li);
+  });
+}
+
+function deletarInvestimento(id) {
+  if (!confirm('Remover este aporte?')) return;
+  investimentos = investimentos.filter(i => i.id !== id);
+  salvar('prisma-investimentos', investimentos);
+  renderInvestimentos();
+  atualizarSaldo();
+}
+
+
+// ══════════════════════════════════════
+// ABA APRENDER — vídeos do YouTube
+// ══════════════════════════════════════
+const videos = [
+  { id: 'HSXcvFVtsdM', titulo: 'Como organizar suas finanças pessoais' },
+  { id: 'V7z5bC4GOQI', titulo: 'Educação financeira para iniciantes' },
+  { id: '3uwjOzbEYjU', titulo: 'Como começar a investir do zero' },
+  { id: 'KMbFjoHUYbA', titulo: 'Controle de gastos na prática' },
+  { id: '-C_5hzJCHaY', titulo: 'Reserva de emergência: como montar' },
+  { id: '96K_M7IpHPQ', titulo: 'Tesouro Direto: guia completo' },
+  { id: '3Ab-BLlEZyk', titulo: 'Hábitos financeiros que mudam sua vida' },
+  { id: 'HDGGwKu7Ndg', titulo: 'Independência financeira: por onde começar' },
+];
+
+function renderVideos() {
+  const grid = document.getElementById('videos-grid');
+  grid.innerHTML = '';
+  videos.forEach(v => {
+    const thumb = `https://img.youtube.com/vi/${v.id}/mqdefault.jpg`;
+    const url   = `https://www.youtube.com/watch?v=${v.id}`;
+    const a = document.createElement('a');
+    a.className = 'video-card';
+    a.href      = url;
+    a.target    = '_blank';
+    a.rel       = 'noopener noreferrer';
+    a.innerHTML = `
+      <div class="video-thumb-wrap">
+        <img class="video-thumb" src="${thumb}" alt="${v.titulo}" loading="lazy" />
+        <div class="video-play">
+          <div class="video-play-icon">▶</div>
+        </div>
+      </div>
+      <div class="video-info">
+        <div class="video-titulo">${v.titulo}</div>
+        <div class="video-canal">YouTube</div>
+      </div>
+    `;
+    grid.appendChild(a);
+  });
+}
+
+
+// ══════════════════════════════════════
+// DATA PADRÃO = hoje
+// ══════════════════════════════════════
+function setDataHoje() {
+  const hoje = new Date().toISOString().split('T')[0];
+  document.getElementById('reg-data').value = hoje;
+  document.getElementById('inv-data').value = hoje;
+}
+
+
+// ══════════════════════════════════════
+// INICIALIZAÇÃO
+// ══════════════════════════════════════
+setDataHoje();
+renderCategorias();
+renderRegistros();
+renderInvestimentos();
+renderVideos();
+atualizarSaldo();
+
+</script>
+</body>
+</html>
