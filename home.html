@@ -12,6 +12,7 @@
   </script>
   <link rel="stylesheet" href="style/main.css" />
   <link rel="stylesheet" href="style/home.css" />
+  <link rel="stylesheet" href="style/rotina.css" />
 </head>
 
 <body>
@@ -104,6 +105,18 @@
           </div>
         </section>
 
+          <section class="card-rotina-hoje">
+          <div class="rotina-home-header">
+    <div class="rotina-home-titulo-wrap">
+      <span class="rotina-home-icone">🗓️</span>
+      <span class="rotina-home-titulo">Rotina de hoje</span>
+    </div>
+    <span class="rotina-home-tag" id="rotina-home-tag"></span>
+  </div>
+  <div class="rotina-home-lista" id="rotina-home-lista">
+    <!-- Preenchido pelo js/rotina.js -->
+  </div>
+</section>
       </div>
 
     </main>
@@ -175,6 +188,8 @@
   <script src="js/metas.js"></script>
   <script src="js/estudar-hoje.js"></script>
   <script src="js/home.js"></script>
+  <script src="js/rotina.js"></script>
+   <script>renderRotinaHome();</script>
 
 </body>
 </html>

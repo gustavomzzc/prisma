@@ -11,6 +11,7 @@
   </script>
   <link rel="stylesheet" href="style/main.css" />
   <link rel="stylesheet" href="style/calendario.css" />
+  <link rel="stylesheet" href="style/rotina.css" />
 </head>
 <body>
 
@@ -53,6 +54,8 @@
     <div class="linha-botoes-topo">
       <button class="btn-hoje" onclick="irParaHoje()">📍 Hoje</button>
       <button class="btn-metas-semanais" onclick="abrirMetasSemanais()">🎯 Metas da semana</button>
+      <button class="btn-metas-semanais" onclick="abrirRotinaSemanal()" style=
+      "background: linear-gradient(135deg, #AB47BC, #7B2D8B);">🗓️ Rotina semanal</button>
     </div>
 
     <!-- Grid do calendário -->
@@ -216,7 +219,21 @@
 
 </div>
 
+<!-- ══ TELA: ROTINA SEMANAL ══ -->
+<div class="rotina-tela" id="rotina-tela">
+  <div class="rotina-topbar">
+    <button class="rotina-voltar" onclick="fecharRotinaSemanal()">←</button>
+    <span class="rotina-titulo-tela">Rotina semanal</span>
+    <span class="rotina-dia-count" id="rotina-semana-label" style="font-size:0.7rem;color:var(--text-muted);background:var(--rosa-claro);padding:3px 10px;border-radius:999px;">—</span>
+  </div>
+  <div class="rotina-conteudo">
+    <div class="rotina-dias-grid" id="rotina-dias-grid">
+      <!-- Gerado pelo js/rotina.js -->
+    </div>
+  </div>
+</div>
 
+<script src="js/rotina.js"></script>
 <script src="js/auth.js"></script>
 <script>protegerPagina();</script>
 <script src="js/sidebar.js"></script>

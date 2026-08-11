@@ -1,0 +1,324 @@
+/* ============================================
+   PRISMA — Estilos da Rotina Semanal
+============================================ */
+
+/* ── TELA FULL DA ROTINA (igual ao detalhe de matéria) ── */
+.rotina-tela {
+  position: fixed;
+  inset: 0;
+  background: var(--bg-page);
+  z-index: 250;
+  display: none;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow-y: auto;
+}
+.rotina-tela.aberta { display: flex; }
+
+/* ── TOPBAR DA ROTINA ── */
+.rotina-topbar {
+  position: sticky;
+  top: 0;
+  background: var(--bg-topbar);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  gap: var(--espaco-sm);
+  padding: 0.85rem 1.1rem;
+  border-bottom: 1px solid var(--border-color);
+  z-index: 10;
+  flex-shrink: 0;
+}
+.rotina-voltar {
+  background: none; border: none; cursor: pointer;
+  font-size: 1.2rem; color: var(--text-primary);
+  padding: 4px; border-radius: var(--borda-sm);
+  transition: background 0.15s;
+}
+.rotina-voltar:hover { background: var(--rosa-claro); }
+.rotina-titulo-tela {
+  font-family: var(--fonte-titulo);
+  font-size: var(--texto-lg);
+  color: var(--text-primary);
+  flex: 1;
+}
+
+/* ── CONTEÚDO ── */
+.rotina-conteudo {
+  padding: var(--espaco-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+  flex: 1;
+}
+
+/* Grid dos 7 dias (coluna única no mobile, 2 colunas no desktop) */
+.rotina-dias-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+}
+
+/* ── CARD DE CADA DIA ── */
+.rotina-dia-card {
+  background: var(--bg-card);
+  border-radius: var(--borda-md);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+}
+
+.rotina-dia-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem var(--espaco-md);
+  cursor: pointer;
+  transition: background 0.15s;
+  user-select: none;
+}
+.rotina-dia-header:hover { background: var(--rosa-claro); }
+
+.rotina-dia-nome-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.rotina-dia-nome {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  color: var(--text-primary);
+}
+.rotina-dia-nome.hoje-destaque {
+  background: var(--gradiente);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.rotina-dia-data {
+  font-size: var(--texto-xs);
+  color: var(--text-muted);
+}
+
+.rotina-dia-resumo { display: flex; align-items: center; gap: 6px; }
+.rotina-dia-count {
+  font-size: var(--texto-xs);
+  color: var(--text-muted);
+  background: var(--rosa-claro);
+  padding: 2px 8px;
+  border-radius: var(--borda-pill);
+}
+.rotina-seta {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  transition: transform 0.2s;
+}
+.rotina-dia-card.aberto .rotina-seta { transform: rotate(180deg); }
+
+/* Corpo do dia — oculto até clicar */
+.rotina-dia-corpo {
+  display: none;
+  flex-direction: column;
+  gap: var(--espaco-sm);
+  padding: 0 var(--espaco-md) var(--espaco-md);
+}
+.rotina-dia-card.aberto .rotina-dia-corpo { display: flex; }
+
+/* ── LISTA DE TAREFAS ORDENADAS POR HORA ── */
+.rotina-tarefas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rotina-tarefa-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--fundo);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--rosa-medio);
+  border-radius: var(--borda-sm);
+  padding: 0.55rem 0.75rem;
+  transition: opacity 0.2s;
+}
+/* Tarefa passada fica com opacidade menor */
+.rotina-tarefa-item.passada {
+  opacity: 0.45;
+  border-left-color: var(--cinza-texto);
+}
+/* Próxima tarefa do dia se destaca */
+.rotina-tarefa-item.proxima {
+  border-left-color: var(--roxo-medio);
+  background: rgba(171, 71, 188, 0.06);
+}
+
+.rotina-tarefa-hora {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--roxo-medio);
+  min-width: 42px;
+  flex-shrink: 0;
+}
+.rotina-tarefa-nome {
+  font-size: var(--texto-sm);
+  color: var(--text-primary);
+  flex: 1;
+}
+.rotina-tarefa-del {
+  background: none; border: none; cursor: pointer;
+  color: var(--text-muted); font-size: 0.85rem;
+  padding: 3px 5px; border-radius: var(--borda-sm);
+  transition: color 0.15s, background 0.15s;
+  flex-shrink: 0;
+}
+.rotina-tarefa-del:hover { color: #E53935; background: rgba(229,57,53,0.08); }
+
+.rotina-vazio-txt {
+  font-size: var(--texto-xs);
+  color: var(--text-muted);
+  text-align: center;
+  padding: 6px 0;
+}
+
+/* ── FORM: ADICIONAR TAREFA ── */
+.rotina-add-form {
+  display: grid;
+  grid-template-columns: 90px 1fr auto;
+  gap: 6px;
+  margin-top: 2px;
+}
+.rotina-add-form input[type="time"],
+.rotina-add-form input[type="text"] {
+  padding: 0.5rem 0.65rem;
+  border: 1.5px solid var(--border-color);
+  border-radius: var(--borda-sm);
+  font-family: var(--fonte-corpo);
+  font-size: var(--texto-xs);
+  color: var(--text-primary);
+  background: var(--input-bg);
+  outline: none;
+  width: 100%;
+  -webkit-appearance: none;
+}
+.rotina-add-form input:focus { border-color: var(--rosa-medio); }
+.rotina-add-btn {
+  background: var(--gradiente);
+  border: none;
+  border-radius: var(--borda-sm);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 0.7rem;
+  transition: opacity 0.15s;
+}
+.rotina-add-btn:hover { opacity: 0.85; }
+
+/* ════════════════════════════════════
+   CARD DE ROTINA NA HOME
+════════════════════════════════════ */
+.card-rotina-hoje {
+  margin: 0 var(--espaco-md);
+  background: var(--bg-card);
+  border-radius: var(--borda-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  transition: background 0.3s;
+}
+
+.rotina-home-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--espaco-md) var(--espaco-lg) 0.6rem;
+}
+.rotina-home-titulo-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.rotina-home-icone { font-size: 1.05rem; }
+.rotina-home-titulo {
+  font-size: var(--texto-sm);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.rotina-home-tag {
+  font-size: var(--texto-xs);
+  color: var(--roxo-medio);
+  background: var(--roxo-claro);
+  padding: 2px 8px;
+  border-radius: var(--borda-pill);
+  font-weight: 600;
+}
+html.dark .rotina-home-tag { background: rgba(171,71,188,0.2); }
+
+.rotina-home-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 0 var(--espaco-lg) var(--espaco-md);
+}
+
+.rotina-home-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--fundo);
+  border-radius: var(--borda-sm);
+  padding: 0.5rem 0.75rem;
+  border-left: 3px solid var(--rosa-medio);
+}
+.rotina-home-item.passada {
+  opacity: 0.45;
+  border-left-color: var(--cinza-texto);
+}
+.rotina-home-hora {
+  font-size: var(--texto-xs);
+  font-weight: 700;
+  color: var(--roxo-medio);
+  min-width: 42px;
+}
+.rotina-home-nome {
+  font-size: var(--texto-sm);
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.rotina-home-vazio {
+  padding: 0 var(--espaco-lg) var(--espaco-md);
+  font-size: var(--texto-sm);
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+/* ════════════════════════════════════
+   RESPONSIVO — DESKTOP
+════════════════════════════════════ */
+@media (min-width: 768px) {
+  .rotina-tela { max-width: 100%; }
+
+  .rotina-topbar {
+    max-width: 100%;
+    padding: 1rem 2.5rem;
+  }
+
+  .rotina-conteudo {
+    max-width: 1000px;
+    margin: 0 auto;
+    width: 100%;
+    padding: var(--espaco-lg) var(--espaco-xl);
+  }
+
+  /* 2 colunas no desktop — todos os 7 dias ficam mais compactos */
+  .rotina-dias-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--espaco-md);
+  }
+
+  .card-rotina-hoje { margin: 0; }
+}
